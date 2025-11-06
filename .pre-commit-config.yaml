@@ -2,8 +2,14 @@ repos:
   - repo: local
     hooks:
       - id: spotless-gradle
-        name: Spotless Check (block commiqt if formatting is wrong)
+        name: Spotless Check (block commit if formatting is wrong if run failed run ./gradlew spotlessApply )
         entry: cmd.exe /c ".\gradlew.bat spotlessJavaCheck"
         language: system
         pass_filenames: false
         always_run: true
+
+      - id: code-quality
+        name: SpotBugs + PMD + Check
+        entry: cmd.exe /c ".\gradlew.bat check"
+        language: system
+        pass_filenames: false
