@@ -1,0 +1,9 @@
+repos:
+  - repo: local
+    hooks:
+      - id: spotless-gradle
+        name: Spotless Check (block commit if formatting is wrong)
+        entry: cmd.exe /c ".\gradlew.bat spotlessJavaCheck"
+        language: system
+        pass_filenames: false
+        always_run: true
