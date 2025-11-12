@@ -2,6 +2,9 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.3.4'
 	id 'io.spring.dependency-management' version '1.1.6'
+	id 'com.diffplug.spotless' version '6.25.0'
+	id 'com.github.spotbugs' version '5.1.4'
+	id 'pmd'
 }
 
 group = 'com.example'
@@ -29,4 +32,32 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+
+}
+
+spotless {
+	java {
+		eclipse()
+		target("src/**/*.java")
+	}
+}
+spotbugs {
+	toolVersion = '4.8.3'
+	effort = 'max'
+	reportLevel = 'low'
+}
+
+tasks.withType(com.github.spotbugs.snom.SpotBugsTask) {
+	reports {
+		html.required = true
+		xml.required = false
+	}
+}
+
+pmd {
+	toolVersion = '6.55.0'
+	ruleSets = ['rulesets/java/basic.xml', 'rulesets/java/unusedcode.xml', 'rulesets/java/imports.xml']
+}
+tasks.named('check') {
+	dependsOn 'spotlessCheck', 'spotbugsMain', 'pmdMain'
 }

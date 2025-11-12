@@ -1,0 +1,15 @@
+repos:
+  - repo: local
+    hooks:
+      - id: spotless-gradle
+        name: Spotless Check (blocks commit if formatting is wrong. Run ./gradlew spotlessApply to fix formatting)
+        entry: bash -c "./gradlew spotlessJavaCheck"
+        language: system
+        pass_filenames: false
+        always_run: true
+
+      - id: code-quality
+        name: SpotBugs + PMD + Check
+        entry: bash -c "./gradlew check"
+        language: system
+        pass_filenames: false
