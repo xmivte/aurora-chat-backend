@@ -2,7 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.3.4'
 	id 'io.spring.dependency-management' version '1.1.6'
-	id "com.diffplug.spotless" version "6.25.0"
+	id 'com.diffplug.spotless' version '6.25.0'
 	id 'com.github.spotbugs' version '5.1.4'
 	id 'pmd'
 }
@@ -55,9 +55,9 @@ tasks.withType(com.github.spotbugs.snom.SpotBugsTask) {
 }
 
 pmd {
-	toolVersion = "6.55.0"
-	ruleSets = ["rulesets/java/basic.xml", "rulesets/java/unusedcode.xml", "rulesets/java/imports.xml"]
+	toolVersion = '6.55.0'
+	ruleSets = ['rulesets/java/basic.xml', 'rulesets/java/unusedcode.xml', 'rulesets/java/imports.xml']
 }
-tasks.named("check") {
-	dependsOn "spotlessCheck", "spotbugsMain", "pmdMain"
+tasks.named('check') {
+	dependsOn 'spotlessCheck', 'spotbugsMain', 'pmdMain'
 }
