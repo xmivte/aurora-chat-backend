@@ -1,8 +1,15 @@
 package com.example.kns.controllers;
 
+import com.example.kns.entities.mockUser;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.kns.services.HelloService;
+
+import java.util.List;
 
 @RestController
 public class HelloController {
@@ -22,4 +29,17 @@ public class HelloController {
 	public String greeting() {
 		return service.greet();
 	}
+
+    @GetMapping("mock")
+    public ResponseEntity<List<mockUser>> getMockUsers()
+    {
+        var list = service.findAll();
+        return ResponseEntity.ok(list);
+    }
+
+    @PostMapping("mock")
+    public ResponseEntity<mockUser> insertUser(@RequestBody mockUser user){
+        service.save(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(user);
+    }
 }
