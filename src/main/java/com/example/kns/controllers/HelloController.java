@@ -1,6 +1,6 @@
 package com.example.kns.controllers;
 
-import com.example.kns.entities.mockUser;
+import com.example.kns.entities.MockUser;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,14 +31,14 @@ public class HelloController {
 	}
 
     @GetMapping("mock")
-    public ResponseEntity<List<mockUser>> getMockUsers()
+    public ResponseEntity<List<MockUser>> getMockUsers()
     {
         var list = service.findAll();
         return ResponseEntity.ok(list);
     }
 
     @PostMapping("mock")
-    public ResponseEntity<mockUser> insertUser(@RequestBody mockUser user){
+    public ResponseEntity<MockUser> insertUser(@RequestBody MockUser user){
         service.save(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }

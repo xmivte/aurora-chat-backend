@@ -1,9 +1,8 @@
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5455/postgres
-    username: postgres
-    password: root
+    username: db_user
+    password: password
     driver-class-name: org.postgresql.Driver
-  jpa:
-    hibernate:
-      ddl-auto: update
+  flyway:
+    locations: classpath:db/migrations

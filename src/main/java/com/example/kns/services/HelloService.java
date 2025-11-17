@@ -1,6 +1,6 @@
 package com.example.kns.services;
 
-import com.example.kns.entities.mockUser;
+import com.example.kns.entities.MockUser;
 import com.example.kns.repository.HelloRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,12 +17,12 @@ public class HelloService {
 		return "approval";
 	}
 
-    public List<mockUser> findAll()
+    public List<MockUser> findAll()
     {
         return repository.findAll();
     }
 
-    public void save(mockUser user)
+    public void save(MockUser user)
     {
         repository.save(user);
     }

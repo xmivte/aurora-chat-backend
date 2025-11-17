@@ -1,12 +1,16 @@
 package com.example.kns.entities;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
+
+import java.util.*;
 
 @Entity
 @Table(name = "mock_users")
 @Data
-public class mockUser
+@NoArgsConstructor
+@AllArgsConstructor
+public class MockUser
 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
