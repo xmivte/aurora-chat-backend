@@ -1,0 +1,29 @@
+package com.example.kns.services;
+
+import com.example.kns.entities.MockUser;
+import com.example.kns.repository.HelloRepository;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+@AllArgsConstructor
+public class HelloService {
+
+    private final HelloRepository repository;
+
+	public String greet() {
+		return "approval";
+	}
+
+    public List<MockUser> findAll()
+    {
+        return repository.findAll();
+    }
+
+    public void save(MockUser user)
+    {
+        repository.save(user);
+    }
+}
