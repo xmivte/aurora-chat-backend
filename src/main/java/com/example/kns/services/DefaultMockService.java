@@ -4,8 +4,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class DefaultMockService implements MockService {
-    @Override
-    public String getText(){
-        return "aa";
-    }
+	@Override
+	public String getText() {
+		return "aa";
+	}
 }

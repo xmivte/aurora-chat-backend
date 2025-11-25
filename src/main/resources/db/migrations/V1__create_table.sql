@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS db.mock_users (
+    id SERIAL PRIMARY KEY,
+    username TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE
+);

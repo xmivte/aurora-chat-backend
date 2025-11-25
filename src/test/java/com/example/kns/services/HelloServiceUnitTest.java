@@ -36,7 +36,7 @@ public class HelloServiceUnitTest {
 	// normal unit test - no mocked service is used
 	@Test
 	void greet_ReturnsApproval() {
-		HelloService service = new HelloService();
+		HelloService service = new HelloService(null, null);
 		String result = service.greet();
 		assertThat(result).isEqualTo("approval");
 	}
