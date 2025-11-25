@@ -22,8 +22,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 	// Brokerio konfiguracija
 	@Override
 	public void configureMessageBroker(MessageBrokerRegistry registry) {
-		registry.enableSimpleBroker("/topic", "/queue"); // Top-level destinations
-		registry.setApplicationDestinationPrefixes("/app"); // Client sends messages here
-		registry.setUserDestinationPrefix("/user"); // private messaging
+		registry.enableSimpleBroker("/topic", "/queue");
+		registry.setApplicationDestinationPrefixes("/app");
+		registry.setUserDestinationPrefix("/user");
 	}
 }

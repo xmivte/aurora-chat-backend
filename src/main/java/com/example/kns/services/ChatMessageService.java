@@ -28,7 +28,6 @@ public class ChatMessageService {
 				messagingTemplate.convertAndSend("/topic/chat." + msg.getGroupId(), msg);
 			} else if (msg.getReceiverId() != null) {
 				// Private chats
-				// STOMP user destination: /user/{receiverId}/queue/messages
 				//messagingTemplate.convertAndSendToUser(msg.getReceiverId().toString(), "/queue/messages", msg);
 			}
 			mapper.markAsSent(msg.getId());
