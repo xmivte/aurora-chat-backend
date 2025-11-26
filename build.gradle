@@ -34,7 +34,6 @@ dependencies {
 
 	// testing with embedded postgres
 	testImplementation platform('io.zonky.test.postgres:embedded-postgres-binaries-bom:17.6.0')
-	testImplementation 'io.zonky.test:embedded-database-spring-test:2.3.0'
 	testImplementation 'io.zonky.test:embedded-postgres:2.1.1'
 
 	// lombok
@@ -42,8 +41,8 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 
     implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4'
+	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.5'
     runtimeOnly 'org.postgresql:postgresql'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
     implementation 'org.flywaydb:flyway-database-postgresql'
 }
