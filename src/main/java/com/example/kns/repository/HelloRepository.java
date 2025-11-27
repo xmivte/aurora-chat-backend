@@ -12,18 +12,17 @@ import java.util.List;
 
 @Mapper
 @Repository
-public interface HelloRepository
-{
-    @Select("SELECT id, username, email FROM db.mock_users")
-    List<MockUser> findAll();
+public interface HelloRepository {
+	@Select("SELECT id, username, email FROM db.mock_users")
+	List<MockUser> findAll();
 
-    @Select("SELECT * FROM db.mock_users WHERE id = #{id}")
-    MockUser findById(Long id);
+	@Select("SELECT * FROM db.mock_users WHERE id = #{id}")
+	MockUser findById(Long id);
 
-    @Insert("INSERT INTO db.mock_users (username, email) VALUES (#{username}, #{email})")
-    @Options(useGeneratedKeys = true, keyProperty = "id")
-    void save(MockUser user);
+	@Insert("INSERT INTO db.mock_users (username, email) VALUES (#{username}, #{email})")
+	@Options(useGeneratedKeys = true, keyProperty = "id")
+	void save(MockUser user);
 
-    @Delete("DELETE from db.mock_users WHERE id = #{id}")
-    void delete(Long id);
+	@Delete("DELETE from db.mock_users WHERE id = #{id}")
+	void delete(Long id);
 }
