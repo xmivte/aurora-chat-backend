@@ -29,15 +29,24 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	// testing with mockito
+	testImplementation 'org.mockito:mockito-core:5.20.0'
 
-	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.5'
-
-	runtimeOnly 'com.h2database:h2'
+	// testing with embedded postgres
+	testImplementation platform('io.zonky.test.postgres:embedded-postgres-binaries-bom:17.6.0')
+	testImplementation 'io.zonky.test:embedded-postgres:2.1.1'
 
 	// lombok
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
+
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4'
+	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.5'
+    runtimeOnly 'org.postgresql:postgresql'
+
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+    implementation 'org.flywaydb:flyway-database-postgresql'
 }
 
 tasks.named('test') {

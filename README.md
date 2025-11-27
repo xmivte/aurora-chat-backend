@@ -4,14 +4,9 @@ This is template/example repository for BE project for Sourcery Academy's 2025 S
 
 It is possible to run linting(Spotless, SpotBugs, PMD) on demand with command ./gradlew check
 
-
-
-
-### To connect to the H2 database:
-- http://localhost:8080/h2-console
-- DBC URL: jdbc:h2:mem:knsdb
-- User: sa
-- Password: (none)
+DB Credentials: username: `db_user`, password: `password` (in application.yml)  
+Start required services for the project with: `docker compose -p edvinas-be up -d`  
+Run Spring Boot application with: `./gradlew bootRun`  
 
 
 ### To test out websockets in POSTMAN:
