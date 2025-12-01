@@ -2,7 +2,6 @@ package com.example.kns.repositories;
 
 import com.example.kns.config.TestEmbeddedPostgresConfig;
 import com.example.kns.entities.MockUser;
-import com.example.kns.repository.HelloRepository;
 import org.junit.jupiter.api.Test;
 import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;

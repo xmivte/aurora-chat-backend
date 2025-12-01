@@ -28,7 +28,8 @@ public class ChatMessageService {
 				messagingTemplate.convertAndSend("/topic/chat." + msg.getGroupId(), msg);
 			} else if (msg.getReceiverId() != null) {
 				// Private chats
-				//messagingTemplate.convertAndSendToUser(msg.getReceiverId().toString(), "/queue/messages", msg);
+				// messagingTemplate.convertAndSendToUser(msg.getReceiverId().toString(),
+				// "/queue/messages", msg);
 			}
 			mapper.markAsSent(msg.getId());
 		}

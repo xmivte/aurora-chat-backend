@@ -1,4 +1,4 @@
-CREATE TABLE chat_messages (
+CREATE TABLE IF NOT EXISTS chat_messages (
     id BIGSERIAL PRIMARY KEY,
     sender_id BIGINT NOT NULL,
     receiver_id BIGINT NULL,
