@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.kns.services.HelloService;
-
 import java.util.List;
 
 @RestController
@@ -41,5 +40,10 @@ public class HelloController {
     public ResponseEntity<MockUser> insertUser(@RequestBody MockUser user){
         service.save(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
+    }
+
+    @GetMapping("secure")
+    public ResponseEntity<String> securedFunction(){
+        return ResponseEntity.ok("Secured function");
     }
 }

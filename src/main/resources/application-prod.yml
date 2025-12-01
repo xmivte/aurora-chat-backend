@@ -1,0 +1,7 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+firebase:
+  credentials: classpath:firebase/firebase-prod.json
