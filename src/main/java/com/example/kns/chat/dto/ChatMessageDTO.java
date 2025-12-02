@@ -1,4 +1,4 @@
-package com.example.kns.dto;
+package com.example.kns.chat.dto;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -7,7 +7,6 @@ import lombok.Setter;
 @Setter
 public class ChatMessageDTO {
 	private Long senderId;
-	private Long receiverId;
 	private String groupId;
 	private String content;
 }

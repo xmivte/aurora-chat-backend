@@ -24,7 +24,7 @@ heart-beat:0,0
 
 
 3. Leave the empty line between the text and ^@ and replace ^@ with a NULL character using Edit → Character Panel → NULL (0)
-- ![img.png](img.png)
+- ![img.png](docs/images/img.png)
 4. Select all → Plugins → MIME Tools → Base64 Encode with Padding and copy the encoded result.
 5. Open POSTMAN and inside select the "Websocket" option, connect to ws://localhost:8080/ws-stomp
 6. Change the message type from "Text", to "Binary" and "Base64"
@@ -39,7 +39,7 @@ destination:/topic/chat.GLOBAL
 
 ^@
 
-![img_1.png](img_1.png)
+![img_1.png](docs/images/img_1.png)
 
 
 ## THIRD STOMP FRAME
@@ -51,7 +51,7 @@ content-type:application/json
 
 ^@
 
-![img_2.png](img_2.png)
+![img_2.png](docs/images/img_2.png)
 
 
 ##### Testing websockets with POSTMAN links:

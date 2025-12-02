@@ -1,9 +1,9 @@
 package com.example.kns.controllers;
 
 import com.example.kns.config.TestEmbeddedPostgresConfig;
-import com.example.kns.dto.ChatMessageDTO;
-import com.example.kns.models.ChatMessage;
-import com.example.kns.services.ChatMessageService;
+import com.example.kns.chat.dto.ChatMessageDTO;
+import com.example.kns.chat.model.ChatMessage;
+import com.example.kns.chat.service.ChatMessageService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -47,14 +47,14 @@ class WebSocketIntegrationTest {
 	@Autowired
 	ChatMessageService messageService;
 
-	private WebSocketStompClient stomp;
+	private WebSocketStompClient stomp = null;
 
 	@BeforeEach
 	void setup() {
 		List<Transport> transports = List.of(new WebSocketTransport(new StandardWebSocketClient()));
 		SockJsClient sockJs = new SockJsClient(transports);
-		stomp = new WebSocketStompClient(sockJs);
-		stomp.setMessageConverter(new MappingJackson2MessageConverter());
+		this.stomp = new WebSocketStompClient(sockJs);
+		this.stomp.setMessageConverter(new MappingJackson2MessageConverter());
 	}
 
 	@Test
@@ -91,10 +91,9 @@ class WebSocketIntegrationTest {
 		assertThat(ok).isTrue();
 
 		Map<String, Object> msgMap = received.get(0);
-		ChatMessage msg = new ChatMessage();
-		msg.setContent((String) msgMap.get("content"));
-		msg.setGroupId((String) msgMap.get("groupId"));
-		msg.setSenderId(((Number) msgMap.get("senderId")).longValue());
+		ChatMessage msg = ChatMessage.builder().content((String) msgMap.get("content"))
+				.groupId((String) msgMap.get("groupId")).senderId(((Number) msgMap.get("senderId")).longValue())
+				.build();
 
 		assertThat(msg.getContent()).isEqualTo("hello");
 		assertThat(msg.getGroupId()).isEqualTo("room1");
