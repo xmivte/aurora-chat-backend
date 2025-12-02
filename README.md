@@ -16,5 +16,5 @@ Swagger UI: http://localhost:8080/swagger-ui/index.html
 OpenAPI JSON: http://localhost:8080/v3/api-docs
 
 Deployed:
-Swagger UI: https://<HOST>/swagger-ui/index.html
-OpenAPI JSON: https://<HOST>/v3/api-docs
+Swagger UI: https://aurora-chat.api.devbstaging.com/swagger-ui/index.html
+OpenAPI JSON: https://aurora-chat.api.devbstaging.com/v3/api-docs
