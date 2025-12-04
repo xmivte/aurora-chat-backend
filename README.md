@@ -6,7 +6,17 @@ It is possible to run linting(Spotless, SpotBugs, PMD) on demand with command ./
 
 DB Credentials: username: `db_user`, password: `password` (in application.yml)  
 Start required services for the project with: `docker compose -p edvinas-be up -d`  
-Run Spring Boot application with: `./gradlew bootRun`  
+Run Spring Boot application with: `./gradlew bootRun`
 
 Run Local with: `./gradlew bootRun --args="--spring.profiles.active=local"`  
 Run Prod with `./gradlew bootRun --args="--spring.profiles.active=prod"`  
+
+API docs
+
+Local:
+Swagger UI: http://localhost:8080/swagger-ui/index.html
+OpenAPI JSON: http://localhost:8080/v3/api-docs
+
+Deployed:
+Swagger UI: https://aurora-chat.api.devbstaging.com/swagger-ui/index.html
+OpenAPI JSON: https://aurora-chat.api.devbstaging.com/v3/api-docs
