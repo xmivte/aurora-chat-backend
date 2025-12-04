@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Profile;
 import java.util.Collections;
 
 @Configuration
-@Profile("nonlocal")
+@Profile("!local")
 public class OpenApiNonlocalConfig {
 
     @Bean
