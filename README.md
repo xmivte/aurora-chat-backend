@@ -6,8 +6,10 @@ It is possible to run linting(Spotless, SpotBugs, PMD) on demand with command ./
 
 DB Credentials: username: `db_user`, password: `password` (in application.yml)  
 Start required services for the project with: `docker compose -p edvinas-be up -d`  
-Run Spring Boot application with: `./gradlew bootRun`  
+Run Spring Boot application with: `./gradlew bootRun`
 
+Run Local with: `./gradlew bootRun --args="--spring.profiles.active=local"`  
+Run Prod with `./gradlew bootRun --args="--spring.profiles.active=prod"`  
 
 API docs
 
