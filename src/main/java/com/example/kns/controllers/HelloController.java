@@ -41,9 +41,4 @@ public class HelloController {
 		service.save(user);
 		return ResponseEntity.status(HttpStatus.CREATED).body(user);
 	}
-
-    @GetMapping("secure")
-    public ResponseEntity<String> securedFunction(){
-        return ResponseEntity.ok("Secured function");
-    }
 }

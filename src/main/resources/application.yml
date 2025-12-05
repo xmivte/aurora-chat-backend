@@ -1,9 +1,4 @@
 spring:
-  config:
-    import:
-      - "application-local.yml"
-      - "application-prod.yml"
-
   datasource:
     url: jdbc:postgresql://localhost:5455/postgres
     username: db_user
