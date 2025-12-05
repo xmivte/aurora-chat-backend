@@ -1,0 +1,16 @@
+CREATE SCHEMA IF NOT EXISTS db;
+
+CREATE TABLE IF NOT EXISTS db.mock_users (
+    id SERIAL PRIMARY KEY,
+    username TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS db.chat_messages (
+    id BIGSERIAL PRIMARY KEY,
+    sender_id BIGINT NOT NULL,
+    group_id VARCHAR(100),
+    content VARCHAR(2000) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    sent BOOLEAN DEFAULT FALSE
+);

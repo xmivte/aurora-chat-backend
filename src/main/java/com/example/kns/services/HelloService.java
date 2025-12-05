@@ -1,9 +1,8 @@
 package com.example.kns.services;
 
 import com.example.kns.entities.MockUser;
-import com.example.kns.repository.HelloRepository;
+import com.example.kns.repositories.HelloRepository;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

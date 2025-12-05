@@ -1,4 +1,4 @@
-package com.example.kns.repository;
+package com.example.kns.repositories;
 
 import com.example.kns.entities.MockUser;
 import org.apache.ibatis.annotations.Delete;
