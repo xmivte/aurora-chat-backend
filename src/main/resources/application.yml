@@ -25,3 +25,6 @@ mybatis:
 app:
   frontend:
     origin: "http://localhost:5173"
+
+firebase:
+  credentials: classpath:firebase/firebase.json
