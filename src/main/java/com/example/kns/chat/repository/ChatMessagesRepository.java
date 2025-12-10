@@ -18,8 +18,10 @@ public interface ChatMessagesRepository {
 	void insert(ChatMessage message);
 
 	@Select("""
-			SELECT id, sender_id AS senderId, group_id AS groupId, content, created_at AS createdAt, sent
-			FROM db.chat_messages
+			SELECT m.id, m.sender_id AS senderId, m.group_id AS groupId, m.content, m.created_at AS createdAt, m.sent, u.username
+			FROM db.chat_messages m
+			JOIN db.users u
+			ON u.id = m.sender_id
 			WHERE sent = FALSE
 			ORDER BY created_at ASC
 			LIMIT #{limit}
@@ -32,4 +34,14 @@ public interface ChatMessagesRepository {
 			WHERE id = #{id}
 			""")
 	void markAsSent(@Param("id") Long id);
+
+	@Select("""
+			SELECT m.id, m.sender_id AS senderId, m.group_id AS groupId, m.content, m.created_at AS createdAt, m.sent, u.username
+			FROM db.chat_messages m
+			JOIN db.users u
+			ON u.id = m.sender_id
+			WHERE group_id = #{groupId}
+			ORDER BY created_at ASC
+			""")
+	List<ChatMessage> findAllMessagesByGroupId(@Param("groupId") String groupId);
 }

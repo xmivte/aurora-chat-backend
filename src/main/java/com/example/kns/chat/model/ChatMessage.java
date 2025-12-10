@@ -16,4 +16,5 @@ public class ChatMessage {
 	private String content; // Future: needs encryption
 	private OffsetDateTime createdAt;
 	private boolean sent; // Poller checks if the message has been sent
+	private String username;
 }
