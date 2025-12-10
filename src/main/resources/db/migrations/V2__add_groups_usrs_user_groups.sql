@@ -16,5 +16,6 @@ CREATE TABLE IF NOT EXISTS db.user_groups (
     user_id INTEGER  NOT NULL REFERENCES db.users(id) ON DELETE RESTRICT,
     group_id VARCHAR(100) NOT NULL REFERENCES db.groups(id) ON DELETE RESTRICT,
     last_read_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_read_message_id INTEGER REFERENCES db.messages(id) ON DELETE SET NULL,
     unread_count int DEFAULT 0
     );
