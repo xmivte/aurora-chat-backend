@@ -1,34 +1,43 @@
 ## README
 
 This is template/example repository for BE project for Sourcery Academy's 2025 Spring session.
-
 It is possible to run linting(Spotless, SpotBugs, PMD) on demand with command ./gradlew check
 
+<h1> How to Run a Project </h1>
+
+**Database Credentials**  
 DB Credentials: username: `db_user`, password: `password` (in application.yml)  
-Start required services for the project with: `docker compose -p edvinas-be up -d`  
-Run Spring Boot application with: `./gradlew bootRun`
 
+**Docker**  
+Start required services for the project with: `docker compose -p edvinas-be up -d` 
+
+**Firebase**  
+Link to the Firebase project: https://console.firebase.google.com/project/sourcery-academy/settings/serviceaccounts/adminsdk
+1. To get JSON file go under `Service Accounts` -> `Generate new private key`.
+2. Rename the downloaded file to `firebase.json`
+3. That downloaded JSON file should be placed in `src/main/resources/firebase/firebase.json` folder.
+
+**Run locally**  
 Run Local with: `./gradlew bootRun --args="--spring.profiles.active=local"`  
-Run Prod with `./gradlew bootRun --args="--spring.profiles.active=prod"`  
+Run Prod with `./gradlew bootRun --args="--spring.profiles.active=prod"`
 
-API docs
+<h1>API docs</h1>
 
-Local:
-Swagger UI: http://localhost:8080/swagger-ui/index.html
-OpenAPI JSON: http://localhost:8080/v3/api-docs
+**Local**:  
+Swagger UI: http://localhost:8080/swagger-ui/index.html  
+OpenAPI JSON: http://localhost:8080/v3/api-docs  
 
-Deployed:
-Swagger UI: https://aurora-chat.api.devbstaging.com/swagger-ui/index.html
-OpenAPI JSON: https://aurora-chat.api.devbstaging.com/v3/api-docs
+**Deployed**:  
+Swagger UI: https://aurora-chat.api.devbstaging.com/swagger-ui/index.html  
+OpenAPI JSON: https://aurora-chat.api.devbstaging.com/v3/api-docs  
 
-
-### To test out websockets in POSTMAN:
+<h1>To test out websockets in POSTMAN:</h1>
 Use Notepad++:
 
 1. Enable View → Show Symbol → Show All Characters
 2. Write the first STOMP frame:
 
-## FIRST STOMP FRAME
+<h3>FIRST STOMP FRAME</h3>
 CONNECT
 accept-version:1.1,1.2
 heart-beat:0,0
@@ -45,7 +54,7 @@ heart-beat:0,0
 8. Repeat steps 2-7 with the SECOND and THIRD STOMP frames below:
 
 
-## SECOND STOMP FRAME
+<h3>SECOND STOMP FRAME</h3>
 SUBSCRIBE
 id:sub-1
 destination:/topic/chat.GLOBAL
@@ -55,7 +64,7 @@ destination:/topic/chat.GLOBAL
 ![img_1.png](docs/images/img_1.png)
 
 
-## THIRD STOMP FRAME
+<h3>THIRD STOMP FRAME</h3>
 SEND
 destination:/app/send.message
 content-type:application/json

@@ -5,6 +5,3 @@ spring:
 app:
   frontend:
     origin: "https://sourcery-app.com"
-
-firebase:
-  credentials: classpath:firebase/firebase-prod.json

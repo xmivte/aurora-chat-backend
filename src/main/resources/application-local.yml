@@ -2,6 +2,3 @@ spring:
   config:
     activate:
       on-profile: local
-
-firebase:
-  credentials: classpath:firebase/firebase-local.json
