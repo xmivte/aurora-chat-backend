@@ -1,7 +1,6 @@
 package com.example.kns.controllers;
 
 import com.example.kns.entities.MockUser;
-import lombok.AllArgsConstructor;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -40,5 +39,10 @@ public class HelloController {
 	public ResponseEntity<MockUser> insertUser(@RequestBody MockUser user) {
 		service.save(user);
 		return ResponseEntity.status(HttpStatus.CREATED).body(user);
+	}
+
+	@GetMapping("secure")
+	public ResponseEntity<String> securedFunction() {
+		return ResponseEntity.ok("From secured endpoint");
 	}
 }

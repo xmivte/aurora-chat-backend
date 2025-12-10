@@ -30,4 +30,9 @@ public class HelloControllerIntegrationTest {
 		mockMvc.perform(get("/test").accept(MediaType.TEXT_PLAIN)).andExpect(status().isOk())
 				.andExpect(content().string("approval"));
 	}
+
+	@Test
+	void testSecuredEndpoint_noAuthorizationHeader_returnsUnauthorized() throws Exception {
+		mockMvc.perform(get("/secure")).andExpect(status().isUnauthorized());
+	}
 }
