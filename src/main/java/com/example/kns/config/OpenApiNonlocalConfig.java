@@ -12,12 +12,9 @@ import java.util.Collections;
 @Profile("!local")
 public class OpenApiNonlocalConfig {
 
-    @Bean
-    public OpenApiCustomizer nonlocalOpenApiCustomizer() {
-        return openApi -> openApi.setServers(
-                Collections.singletonList(
-                        new Server().url("https://aurora-chat.api.devbstaging.com")
-                )
-        );
-    }
+	@Bean
+	public OpenApiCustomizer nonlocalOpenApiCustomizer() {
+		return openApi -> openApi
+				.setServers(Collections.singletonList(new Server().url("https://aurora-chat.api.devbstaging.com")));
+	}
 }

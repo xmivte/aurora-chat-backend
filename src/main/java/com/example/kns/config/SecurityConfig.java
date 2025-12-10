@@ -22,39 +22,29 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/secure").authenticated()
-                        .anyRequest().permitAll()
-                )
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.decoder(firebaseJwtDecoder())));
-        return httpSecurity.build();
-    }
+	@Bean
+	public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+		httpSecurity.csrf(csrf -> csrf.disable())
+				.authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+						.requestMatchers(HttpMethod.GET, "/secure").authenticated().anyRequest().permitAll())
+				.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.decoder(firebaseJwtDecoder())));
+		return httpSecurity.build();
+	}
 
-    @Bean
-    public JwtDecoder firebaseJwtDecoder() {
-        return token -> {
-            try {
-                FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
-                Map<String, Object> claims = decodedToken.getClaims();
+	@Bean
+	public JwtDecoder firebaseJwtDecoder() {
+		return token -> {
+			try {
+				FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
+				Map<String, Object> claims = decodedToken.getClaims();
 
-                Instant issuedAt = Instant.ofEpochSecond(((Number) claims.getOrDefault("iat", 0)).longValue());
-                Instant expiresAt = Instant.ofEpochSecond(((Number) claims.getOrDefault("exp", 0)).longValue());
+				Instant issuedAt = Instant.ofEpochSecond(((Number) claims.getOrDefault("iat", 0)).longValue());
+				Instant expiresAt = Instant.ofEpochSecond(((Number) claims.getOrDefault("exp", 0)).longValue());
 
-                return new Jwt(
-                        token,
-                        issuedAt,
-                        expiresAt,
-                        Map.of("alg", "RS256"),
-                        claims
-                );
-            } catch (FirebaseAuthException e) {
-                throw new JwtException("Invalid Firebase ID token", e);
-            }
-        };
-    }
+				return new Jwt(token, issuedAt, expiresAt, Map.of("alg", "RS256"), claims);
+			} catch (FirebaseAuthException e) {
+				throw new JwtException("Invalid Firebase ID token", e);
+			}
+		};
+	}
 }
