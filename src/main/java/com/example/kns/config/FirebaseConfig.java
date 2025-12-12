@@ -11,18 +11,18 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class FirebaseConfig {
 
-    @Value("${firebase.credentials}")
-    private Resource serviceAccountResource;
+	@Value("${firebase.credentials}")
+	private Resource serviceAccountResource;
 
-    @PostConstruct
-    public void firebaseInitializer() {
-        try{
-            var credentials = GoogleCredentials.fromStream(serviceAccountResource.getInputStream());
-            var options = FirebaseOptions.builder().setCredentials(credentials).build();
+	@PostConstruct
+	public void firebaseInitializer() {
+		try {
+			var credentials = GoogleCredentials.fromStream(serviceAccountResource.getInputStream());
+			var options = FirebaseOptions.builder().setCredentials(credentials).build();
 
-            FirebaseApp.initializeApp(options);
-        } catch(Exception e){
-            throw new RuntimeException(e);
-        }
-    }
+			FirebaseApp.initializeApp(options);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 }

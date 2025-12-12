@@ -23,7 +23,8 @@ public class ChatMessageControllerRest {
 	public List<ChatMessageDTO> getMessages(@PathVariable String groupId) {
 		return service.getAll(groupId).stream()
 				.map(msg -> ChatMessageDTO.builder().id(msg.getId()).senderId(msg.getSenderId())
-						.groupId(msg.getGroupId()).content(msg.getContent()).createdAt(msg.getCreatedAt()).username(msg.getUsername()).build())
+						.groupId(msg.getGroupId()).content(msg.getContent()).createdAt(msg.getCreatedAt())
+						.username(msg.getUsername()).build())
 				.toList();
 	}
 }

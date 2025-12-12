@@ -41,8 +41,8 @@ public class HelloController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(user);
 	}
 
-    	@GetMapping("secure")
-    	public ResponseEntity<String> securedFunction(){
+	@GetMapping("secure")
+	public ResponseEntity<String> securedFunction() {
 		return ResponseEntity.ok("From secured endpoint");
-    	}
+	}
 }

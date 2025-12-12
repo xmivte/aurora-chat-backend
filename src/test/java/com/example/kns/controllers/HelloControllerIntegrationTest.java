@@ -33,7 +33,6 @@ public class HelloControllerIntegrationTest {
 
 	@Test
 	void testSecuredEndpoint_noAuthorizationHeader_returnsUnauthorized() throws Exception {
-		mockMvc.perform(get("/secure"))
-			.andExpect(status().isUnauthorized());
+		mockMvc.perform(get("/secure")).andExpect(status().isUnauthorized());
 	}
 }

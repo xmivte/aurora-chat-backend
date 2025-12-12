@@ -13,6 +13,8 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.config.Customizer;
+
 
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -27,59 +29,46 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity
-                .cors()
-                .and()
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/secure").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/messages/**").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/user/**").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/group/**").authenticated()
-                        .requestMatchers("/ws/**").authenticated()
-                        .anyRequest().permitAll()
-                )
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.decoder(firebaseJwtDecoder())));
-        return httpSecurity.build();
-    }
+	@Bean
+	public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+		httpSecurity.cors(Customizer.withDefaults()).csrf(csrf -> csrf.disable())
+				.authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+						.requestMatchers(HttpMethod.GET, "/secure").authenticated()
+						.requestMatchers(HttpMethod.GET, "/messages/**").authenticated()
+						.requestMatchers(HttpMethod.GET, "/user/**").authenticated()
+						.requestMatchers(HttpMethod.GET, "/group/**").authenticated()
+						.anyRequest().permitAll())
+				.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.decoder(firebaseJwtDecoder())));
+		return httpSecurity.build();
+	}
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:5173", "https://sourcery-app.com"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("*"));
-        config.setAllowCredentials(true);
+	@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration config = new CorsConfiguration();
+		config.setAllowedOrigins(List.of("http://localhost:5173", "https://sourcery-app.com"));
+		config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+		config.setAllowedHeaders(List.of("*"));
+		config.setAllowCredentials(true);
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-        return source;
-    }
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", config);
+		return source;
+	}
 
+	@Bean
+	public JwtDecoder firebaseJwtDecoder() {
+		return token -> {
+			try {
+				FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
+				Map<String, Object> claims = decodedToken.getClaims();
 
-    @Bean
-    public JwtDecoder firebaseJwtDecoder() {
-        return token -> {
-            try {
-                FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
-                Map<String, Object> claims = decodedToken.getClaims();
+				Instant issuedAt = Instant.ofEpochSecond(((Number) claims.getOrDefault("iat", 0)).longValue());
+				Instant expiresAt = Instant.ofEpochSecond(((Number) claims.getOrDefault("exp", 0)).longValue());
 
-                Instant issuedAt = Instant.ofEpochSecond(((Number) claims.getOrDefault("iat", 0)).longValue());
-                Instant expiresAt = Instant.ofEpochSecond(((Number) claims.getOrDefault("exp", 0)).longValue());
-
-                return new Jwt(
-                        token,
-                        issuedAt,
-                        expiresAt,
-                        Map.of("alg", "RS256"),
-                        claims
-                );
-            } catch (FirebaseAuthException e) {
-                throw new JwtException("Invalid Firebase ID token", e);
-            }
-        };
-    }
+				return new Jwt(token, issuedAt, expiresAt, Map.of("alg", "RS256"), claims);
+			} catch (FirebaseAuthException e) {
+				throw new JwtException("Invalid Firebase ID token", e);
+			}
+		};
+	}
 }
