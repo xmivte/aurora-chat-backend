@@ -21,7 +21,8 @@ public class WebSocketConfigDev implements WebSocketMessageBrokerConfigurer {
 	@Override
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
 		// FE SockJS endpoint
-		registry.addEndpoint("/ws").addInterceptors(firebaseHandshakeInterceptor).setAllowedOrigins(frontendOrigin).withSockJS();
+		registry.addEndpoint("/ws").addInterceptors(firebaseHandshakeInterceptor).setAllowedOrigins(frontendOrigin)
+				.withSockJS();
 		// POSTMAN testing endpoint
 		registry.addEndpoint("/ws-stomp").setAllowedOrigins("*");
 	}

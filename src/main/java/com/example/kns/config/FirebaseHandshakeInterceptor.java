@@ -13,49 +13,39 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import java.util.Map;
 import java.util.List;
 
-
-
 @Component
 public class FirebaseHandshakeInterceptor implements HandshakeInterceptor {
 
-    @Override
-    public boolean beforeHandshake(
-            ServerHttpRequest request,
-            ServerHttpResponse response,
-            WebSocketHandler wsHandler,
-            Map<String, Object> attributes) {
+	@Override
+	public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler,
+			Map<String, Object> attributes) {
 
-        if (request instanceof ServletServerHttpRequest servletRequest) {
-            HttpServletRequest req = servletRequest.getServletRequest();
+		if (request instanceof ServletServerHttpRequest servletRequest) {
+			HttpServletRequest req = servletRequest.getServletRequest();
 
-            String token = req.getParameter("token");
-            if (token == null || token.isEmpty()) {
-                return false; // reject unauthenticated WS handshake
-            }
+			String token = req.getParameter("token");
+			if (token == null || token.isEmpty()) {
+				return false; // reject unauthenticated WS handshake
+			}
 
-            try {
-                FirebaseToken decodedToken =
-                        FirebaseAuth.getInstance().verifyIdToken(token);
+			try {
+				FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
 
-                // Set Principal
-                UsernamePasswordAuthenticationToken auth =
-                        new UsernamePasswordAuthenticationToken(
-                                decodedToken.getUid(), null, List.of()
-                        );
+				// Set Principal
+				UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+						decodedToken.getUid(), null, List.of());
 
-                attributes.put("principal", auth);
-            } catch (Exception e) {
-                return false; // invalid token
-            }
-        }
-        return true;
-    }
+				attributes.put("principal", auth);
+			} catch (Exception e) {
+				return false; // invalid token
+			}
+		}
+		return true;
+	}
 
-    @Override
-    public void afterHandshake(ServerHttpRequest request,
-                               ServerHttpResponse response,
-                               WebSocketHandler wsHandler,
-                               Exception ex) {
-        // usually not needed, safe to leave empty
-    }
+	@Override
+	public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler,
+			Exception ex) {
+		// usually not needed, safe to leave empty
+	}
 }

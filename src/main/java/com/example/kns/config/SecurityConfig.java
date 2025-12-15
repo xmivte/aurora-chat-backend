@@ -15,7 +15,6 @@ import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.config.Customizer;
 
-
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -36,8 +35,7 @@ public class SecurityConfig {
 						.requestMatchers(HttpMethod.GET, "/secure").authenticated()
 						.requestMatchers(HttpMethod.GET, "/messages/**").authenticated()
 						.requestMatchers(HttpMethod.GET, "/user/**").authenticated()
-						.requestMatchers(HttpMethod.GET, "/group/**").authenticated()
-						.anyRequest().permitAll())
+						.requestMatchers(HttpMethod.GET, "/group/**").authenticated().anyRequest().permitAll())
 				.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.decoder(firebaseJwtDecoder())));
 		return httpSecurity.build();
 	}
