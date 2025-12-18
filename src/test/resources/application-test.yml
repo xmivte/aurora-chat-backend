@@ -1,10 +1,13 @@
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost/testdb?currentSchema=db
-    driver-class-name: org.postgresql.Driver
-
   flyway:
     enabled: true
     schemas: db
     default-schema: db
     locations: classpath:db/migrations
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+
+firebase:
+  enabled: false

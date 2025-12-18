@@ -55,6 +55,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
 
 	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'com.github.spotbugs:spotbugs-annotations:4.9.8'
 }
 
 tasks.named('test') {

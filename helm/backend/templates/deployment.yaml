@@ -17,6 +17,11 @@ spec:
       containers:
         - name: {{ include "backend.fullname" . }}
           image: {{ .Values.backend.container.image }}
+          volumeMounts:
+            - name: firebase-config
+              mountPath: /etc/firebase.json
+              subPath: firebase.json
+              readOnly: true
           imagePullPolicy: "Always"
           ports:
             - name: http
@@ -43,6 +48,18 @@ spec:
                 secretKeyRef:
                   name: database-secrets
                   key: POSTGRES_HOST
+            - name: POSTGRES_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: database-secrets
+                  key: POSTGRES_PORT
       imagePullSecrets:
       - name: regcred
+      volumes:
+        - name: firebase-config
+          secret:
+            secretName: {{ .Values.firebase.secretName }}
+            items:
+              - key: {{ .Values.firebase.secretKey }}
+                path: firebase.json
 
