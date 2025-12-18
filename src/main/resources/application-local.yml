@@ -2,3 +2,7 @@ spring:
   config:
     activate:
       on-profile: local
+
+app:
+  frontend:
+    origin: "http://localhost:5173"

@@ -17,8 +17,8 @@ public class GroupService {
 
 	private final GroupRepository mapper;
 
-	public List<Group> getAll(Long userId) {
-		if (userId == null) {
+	public List<Group> getAll(String userId) {
+		if (userId.isBlank()) {
 			throw new IllegalArgumentException("User id is blank");
 		}
 		return mapper.findAllGroupsByUserId(userId);

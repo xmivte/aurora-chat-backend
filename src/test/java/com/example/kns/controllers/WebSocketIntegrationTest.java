@@ -24,6 +24,13 @@ import org.springframework.web.socket.messaging.WebSocketStompClient;
 import org.springframework.web.socket.sockjs.client.SockJsClient;
 import org.springframework.web.socket.sockjs.client.Transport;
 import org.springframework.web.socket.sockjs.client.WebSocketTransport;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyString;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseToken;
+import com.google.firebase.auth.FirebaseAuthException;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -44,14 +51,22 @@ class WebSocketIntegrationTest {
 	@LocalServerPort
 	int port;
 
+	@MockBean
+	FirebaseAuth firebaseAuth;
+
 	@Autowired
 	ChatMessageService messageService;
 
 	private WebSocketStompClient stomp = null;
 
 	@BeforeEach
-	void setup() {
+	void setup() throws FirebaseAuthException {
 		List<Transport> transports = List.of(new WebSocketTransport(new StandardWebSocketClient()));
+
+		FirebaseToken token = mock(FirebaseToken.class);
+		when(token.getUid()).thenReturn("userId5");
+		when(firebaseAuth.verifyIdToken(anyString())).thenReturn(token);
+
 		SockJsClient sockJs = new SockJsClient(transports);
 		this.stomp = new WebSocketStompClient(sockJs);
 		this.stomp.setMessageConverter(new MappingJackson2MessageConverter());
@@ -63,8 +78,12 @@ class WebSocketIntegrationTest {
 		CountDownLatch latch = new CountDownLatch(1);
 		List<Map<String, Object>> received = new ArrayList<>();
 
-		String wsUrl = "ws://localhost:" + port + "/ws";
-		StompSession session = stomp.connect(wsUrl, new WebSocketHttpHeaders(), new StompSessionHandlerAdapter() {
+		String wsUrl = "ws://localhost:" + port + "/ws?token=fake-token";
+
+		WebSocketHttpHeaders handshakeHeaders = new WebSocketHttpHeaders();
+		handshakeHeaders.add("Authorization", "Bearer test-firebase-token");
+
+		StompSession session = stomp.connect(wsUrl, handshakeHeaders, new StompSessionHandlerAdapter() {
 		}).get(3, TimeUnit.SECONDS);
 
 		session.subscribe("/topic/chat.room1", new StompFrameHandler() {
@@ -80,7 +99,7 @@ class WebSocketIntegrationTest {
 		});
 
 		ChatMessageDTO dto = new ChatMessageDTO();
-		dto.setSenderId(5L);
+		dto.setSenderId("userId5");
 		dto.setGroupId("room1");
 		dto.setContent("hello");
 		session.send("/app/send.message", dto);
@@ -92,11 +111,10 @@ class WebSocketIntegrationTest {
 
 		Map<String, Object> msgMap = received.get(0);
 		ChatMessage msg = ChatMessage.builder().content((String) msgMap.get("content"))
-				.groupId((String) msgMap.get("groupId")).senderId(((Number) msgMap.get("senderId")).longValue())
-				.build();
+				.groupId((String) msgMap.get("groupId")).senderId((String) (msgMap.get("senderId"))).build();
 
 		assertThat(msg.getContent()).isEqualTo("hello");
 		assertThat(msg.getGroupId()).isEqualTo("room1");
-		assertThat(msg.getSenderId()).isEqualTo(5L);
+		assertThat(msg.getSenderId()).isEqualTo("userId5");
 	}
 }

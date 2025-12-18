@@ -19,7 +19,7 @@ public class GroupController {
 	private final GroupService service;
 
 	@GetMapping("/{userId}")
-	public List<GroupDTO> getGroups(@PathVariable Long userId) {
+	public List<GroupDTO> getGroups(@PathVariable String userId) {
 		return service.getAll(userId).stream().map(
 				group -> GroupDTO.builder().id(group.getId()).name(group.getName()).image(group.getImage()).build())
 				.toList();

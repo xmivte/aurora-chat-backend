@@ -20,5 +20,5 @@ public interface GroupRepository {
 			ON g.id = ug.group_id
 			WHERE ug.user_id = #{userId}
 			""")
-	List<Group> findAllGroupsByUserId(@Param("userId") Long userId);
+	List<Group> findAllGroupsByUserId(@Param("userId") String userId);
 }

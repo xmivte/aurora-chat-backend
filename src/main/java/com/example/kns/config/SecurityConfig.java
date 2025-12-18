@@ -4,6 +4,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -28,14 +29,16 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+	@Value("${app.frontend.origin}")
+	private String frontendOrigin;
+
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
 		httpSecurity.cors(Customizer.withDefaults()).csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-						.requestMatchers(HttpMethod.GET, "/secure").authenticated()
-						.requestMatchers(HttpMethod.GET, "/messages/**").authenticated()
-						.requestMatchers(HttpMethod.GET, "/user/**").authenticated()
-						.requestMatchers(HttpMethod.GET, "/group/**").authenticated().anyRequest().permitAll())
+						.requestMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll()
+						.requestMatchers(HttpMethod.GET, "/v3/**").permitAll().requestMatchers(HttpMethod.GET, "/ws/**")
+						.permitAll().anyRequest().authenticated())
 				.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.decoder(firebaseJwtDecoder())));
 		return httpSecurity.build();
 	}
@@ -43,7 +46,7 @@ public class SecurityConfig {
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration config = new CorsConfiguration();
-		config.setAllowedOrigins(List.of("http://localhost:5173", "https://sourcery-app.com"));
+		config.setAllowedOrigins(List.of(frontendOrigin));
 		config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 		config.setAllowedHeaders(List.of("*"));
 		config.setAllowCredentials(true);

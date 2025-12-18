@@ -1,10 +1,13 @@
 package com.example.kns.controllers;
 
+import com.example.kns.config.TestEmbeddedPostgresConfig;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -15,6 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
 @AutoConfigureMockMvc
+@Import(TestEmbeddedPostgresConfig.class)
 public class HelloControllerIntegrationTest {
 	@Autowired
 	private MockMvc mockMvc;

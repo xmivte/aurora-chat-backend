@@ -21,6 +21,7 @@ Link to the Firebase project: https://console.firebase.google.com/project/source
 Run Local with: `./gradlew bootRun --args="--spring.profiles.active=local"`  
 Run Prod with `./gradlew bootRun --args="--spring.profiles.active=prod"`
 
+
 <h1>API docs</h1>
 
 **Local**:  
@@ -30,6 +31,38 @@ OpenAPI JSON: http://localhost:8080/v3/api-docs
 **Deployed**:  
 Swagger UI: https://aurora-chat.api.devbstaging.com/swagger-ui/index.html  
 OpenAPI JSON: https://aurora-chat.api.devbstaging.com/v3/api-docs  
+
+h1>To test out websockets in FE:</h1>
+
+There is no user, group creation currently you to test out the capabilities
+you will need to add db entries manually.
+
+1. Login into the app.
+2. Go to App.tsx
+
+   useEffect(() => {
+   const auth = getAuth();
+   const user = auth.currentUser;
+   if (user) {
+
+3. Add console.log(user.uid);
+
+   setUserId(user.uid);
+   } else {
+   console.warn('No authenticated user');
+   }
+   }, []);
+
+4. Copy the value from console log (it is your id)
+5. Creat user with that id
+6. Repeat steps 1, 4, 5 with a different email account 
+7. Create a db entry into group table
+8. Create a db entries into user_groups table
+Then you go the url the group you created should be displayed
+then you click on it a chat with the other account should be open
+if you open two different browsers with different users you can chat 
+between them
+
 
 <h1>To test out websockets in POSTMAN:</h1>
 Use Notepad++:
