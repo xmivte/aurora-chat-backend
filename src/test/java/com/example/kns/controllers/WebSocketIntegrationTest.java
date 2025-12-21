@@ -4,6 +4,9 @@ import com.example.kns.config.TestEmbeddedPostgresConfig;
 import com.example.kns.chat.dto.ChatMessageDTO;
 import com.example.kns.chat.model.ChatMessage;
 import com.example.kns.chat.service.ChatMessageService;
+import com.example.kns.group.repository.GroupRepository;
+import com.example.kns.user.repository.UserRepository;
+import com.example.kns.user_groups.repository.UserGroupRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -33,6 +36,7 @@ import com.google.firebase.auth.FirebaseToken;
 import com.google.firebase.auth.FirebaseAuthException;
 
 import java.lang.reflect.Type;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -57,14 +61,34 @@ class WebSocketIntegrationTest {
 	@Autowired
 	ChatMessageService messageService;
 
+	@Autowired
+	UserRepository userRepository;
+
+	@Autowired
+	GroupRepository groupRepository;
+
+	@Autowired
+	UserGroupRepository userGroupRepository;
+
 	private WebSocketStompClient stomp = null;
 
 	@BeforeEach
 	void setup() throws FirebaseAuthException {
+		userRepository.insert("userId5", "test-user", "userId5@test.com", null);
+		groupRepository.insert("room1", "room1", null);
+		userGroupRepository.insert("userId5", "room1");
 		List<Transport> transports = List.of(new WebSocketTransport(new StandardWebSocketClient()));
+
+		long iat = Instant.now().getEpochSecond();
+		long exp = iat + 3600;
 
 		FirebaseToken token = mock(FirebaseToken.class);
 		when(token.getUid()).thenReturn("userId5");
+		when(token.getClaims()).thenReturn(Map.of(
+				"sub", "userId5",
+				"iat", iat,
+				"exp", exp
+		));
 		when(firebaseAuth.verifyIdToken(anyString())).thenReturn(token);
 
 		SockJsClient sockJs = new SockJsClient(transports);

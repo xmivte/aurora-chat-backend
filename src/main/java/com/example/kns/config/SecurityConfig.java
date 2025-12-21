@@ -8,20 +8,19 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.config.Customizer;
-
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import java.util.List;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 
 @Configuration
@@ -29,17 +28,29 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+	private final FirebaseAuth firebaseAuth;
+
 	@Value("${app.frontend.origin}")
 	private String frontendOrigin;
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-		httpSecurity.cors(Customizer.withDefaults()).csrf(csrf -> csrf.disable())
-				.authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+		httpSecurity
+				.cors(Customizer.withDefaults())
+				.csrf(csrf -> csrf.disable())
+				.authorizeHttpRequests(auth -> auth
+						.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 						.requestMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll()
-						.requestMatchers(HttpMethod.GET, "/v3/**").permitAll().requestMatchers(HttpMethod.GET, "/ws/**")
-						.permitAll().anyRequest().authenticated())
+						.requestMatchers(HttpMethod.GET, "/v3/**").permitAll()
+
+						// ✅ allow websocket endpoints
+						.requestMatchers("/ws/**").permitAll()
+						.requestMatchers("/ws-stomp/**").permitAll()
+						.requestMatchers("/ws-stomp").permitAll()
+
+						.anyRequest().authenticated())
 				.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.decoder(firebaseJwtDecoder())));
+
 		return httpSecurity.build();
 	}
 
@@ -60,7 +71,7 @@ public class SecurityConfig {
 	public JwtDecoder firebaseJwtDecoder() {
 		return token -> {
 			try {
-				FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
+				FirebaseToken decodedToken = firebaseAuth.verifyIdToken(token);
 				Map<String, Object> claims = decodedToken.getClaims();
 
 				Instant issuedAt = Instant.ofEpochSecond(((Number) claims.getOrDefault("iat", 0)).longValue());

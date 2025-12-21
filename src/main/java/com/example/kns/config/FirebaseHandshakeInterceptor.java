@@ -2,6 +2,7 @@ package com.example.kns.config;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseToken;
+import lombok.AllArgsConstructor;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 import org.springframework.stereotype.Component;
 import org.springframework.http.server.ServerHttpRequest;
@@ -14,7 +15,10 @@ import java.util.Map;
 import java.util.List;
 
 @Component
+@AllArgsConstructor
 public class FirebaseHandshakeInterceptor implements HandshakeInterceptor {
+
+	private final FirebaseAuth firebaseAuth;
 
 	@Override
 	public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler,
@@ -29,7 +33,7 @@ public class FirebaseHandshakeInterceptor implements HandshakeInterceptor {
 			}
 
 			try {
-				FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
+				FirebaseToken decodedToken = firebaseAuth.verifyIdToken(token);
 
 				// Set Principal
 				UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
