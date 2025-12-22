@@ -1,7 +1,9 @@
 package com.example.kns.config;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.AllArgsConstructor;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 import org.springframework.stereotype.Component;
@@ -16,6 +18,7 @@ import java.util.List;
 
 @Component
 @AllArgsConstructor
+@SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "Spring DI bean")
 public class FirebaseHandshakeInterceptor implements HandshakeInterceptor {
 
 	private final FirebaseAuth firebaseAuth;
@@ -35,13 +38,12 @@ public class FirebaseHandshakeInterceptor implements HandshakeInterceptor {
 			try {
 				FirebaseToken decodedToken = firebaseAuth.verifyIdToken(token);
 
-				// Set Principal
 				UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
 						decodedToken.getUid(), null, List.of());
 
 				attributes.put("principal", auth);
-			} catch (Exception e) {
-				return false; // invalid token
+			} catch (FirebaseAuthException e) {
+				return false;
 			}
 		}
 		return true;
@@ -50,6 +52,6 @@ public class FirebaseHandshakeInterceptor implements HandshakeInterceptor {
 	@Override
 	public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler,
 			Exception ex) {
-		// usually not needed, safe to leave empty
+
 	}
 }

@@ -10,8 +10,10 @@ import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.TestPropertySource;
 import org.junit.jupiter.api.TestInstance;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
 import java.util.UUID;
@@ -23,6 +25,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import(TestEmbeddedPostgresConfig.class)
 @TestPropertySource("classpath:application-test.yml")
+@Transactional
+@Rollback
 public class GroupRepositoryTest {
 
 	@Autowired
@@ -39,23 +43,32 @@ public class GroupRepositoryTest {
 		userId = UUID.randomUUID().toString();
 		groupId = UUID.randomUUID().toString();
 
-		try (var conn = dataSource.getConnection(); var stmt = conn.createStatement()) {
+		try (var conn = dataSource.getConnection()) {
 
-			stmt.executeUpdate("""
-					    INSERT INTO db.users (id, username, email, image)
-					    VALUES ('%s', 'john', 'john@example.com', 'avatar.png')
-					""".formatted(userId));
+			try (var userStmt = conn
+					.prepareStatement("INSERT INTO db.users (id, username, email, image) VALUES (?, ?, ?, ?)")) {
+				userStmt.setString(1, userId);
+				userStmt.setString(2, "john");
+				userStmt.setString(3, "johny@example.com");
+				userStmt.setString(4, "avatar.png");
+				userStmt.executeUpdate();
+			}
 
-			stmt.executeUpdate("""
-					    INSERT INTO db.groups (id, name, image)
-					    VALUES ('%s', 'group', 'avatar.png')
-					""".formatted(groupId));
+			try (var groupStmt = conn.prepareStatement("INSERT INTO db.groups (id, name, image) VALUES (?, ?, ?)")) {
+				groupStmt.setString(1, groupId);
+				groupStmt.setString(2, "group");
+				groupStmt.setString(3, "avatar.png");
+				groupStmt.executeUpdate();
+			}
 
-			stmt.executeUpdate("""
-					    INSERT INTO db.user_groups (user_id, group_id)
-					    VALUES ('%s', '%s')
-					""".formatted(userId, groupId));
+			try (var userGroupStmt = conn
+					.prepareStatement("INSERT INTO db.user_groups (user_id, group_id) VALUES (?, ?)")) {
+				userGroupStmt.setString(1, userId);
+				userGroupStmt.setString(2, groupId);
+				userGroupStmt.executeUpdate();
+			}
 		}
+
 	}
 
 	@Test

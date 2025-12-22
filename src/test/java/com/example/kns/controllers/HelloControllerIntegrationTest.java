@@ -40,7 +40,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(TestEmbeddedPostgresConfig.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-@Import(TestEmbeddedPostgresConfig.class)
 public class HelloControllerIntegrationTest {
 	@Autowired
 	private MockMvc mockMvc;

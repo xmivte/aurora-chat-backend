@@ -39,10 +39,10 @@ public class FirebaseConfig {
 	@Value("${firebase.credentials}")
 	private Resource serviceAccountResource;
 
-	@Bean
-	public FirebaseApp firebaseInitializer() throws IOException {
+	// @Bean
+	public FirebaseApp initializeFirebase(InputStream serviceAccount) throws IOException {
 		if (FirebaseApp.getApps().isEmpty()) {
-			var credentials = GoogleCredentials.fromStream(serviceAccountResource.getInputStream());
+			var credentials = GoogleCredentials.fromStream(serviceAccount);
 
 			var options = FirebaseOptions.builder().setCredentials(credentials).build();
 

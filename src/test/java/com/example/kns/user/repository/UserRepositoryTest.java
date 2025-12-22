@@ -9,7 +9,9 @@ import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
 import java.util.List;
@@ -22,6 +24,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import(TestEmbeddedPostgresConfig.class)
 @TestPropertySource("classpath:application-test.yml")
+@Transactional
+@Rollback
 class UserRepositoryTest {
 
 	@Autowired
@@ -35,26 +39,37 @@ class UserRepositoryTest {
 
 	@BeforeAll
 	void setUp(@Autowired DataSource dataSource) throws Exception {
-		userId = UUID.randomUUID().toString();
-		groupId = UUID.randomUUID().toString();
+		userId = "userID1";
+		groupId = "groupId1";
 
-		try (var conn = dataSource.getConnection(); var stmt = conn.createStatement()) {
+		try (var conn = dataSource.getConnection()) {
 
-			stmt.executeUpdate("""
+			try (var userStmt = conn.prepareStatement("""
 					    INSERT INTO db.users (id, username, email, image)
-					    VALUES ('%s', 'john', 'john@example.com', 'avatar.png')
-					""".formatted(userId));
+					    VALUES (?, 'john', 'john@example.com', 'avatar.png')
+					""")) {
+				userStmt.setString(1, userId);
+				userStmt.executeUpdate();
+			}
 
-			stmt.executeUpdate("""
+			try (var groupStmt = conn.prepareStatement("""
 					    INSERT INTO db.groups (id, name, image)
-					    VALUES ('%s', 'group', 'avatar.png')
-					""".formatted(groupId));
+					    VALUES (?, 'group', 'avatar.png')
+					""")) {
+				groupStmt.setString(1, groupId);
+				groupStmt.executeUpdate();
+			}
 
-			stmt.executeUpdate("""
+			try (var userGroupStmt = conn.prepareStatement("""
 					    INSERT INTO db.user_groups (user_id, group_id)
-					    VALUES ('%s', '%s')
-					""".formatted(userId, groupId));
+					    VALUES (?, ?)
+					""")) {
+				userGroupStmt.setString(1, userId);
+				userGroupStmt.setString(2, groupId);
+				userGroupStmt.executeUpdate();
+			}
 		}
+
 	}
 
 	@Test
@@ -69,9 +84,9 @@ class UserRepositoryTest {
 
 	@Test
 	void findAllUsersByGroupId_WhenGroupIsEmpty_ReturnsEmptyList() {
-		String groupId = UUID.randomUUID().toString();
+		String groupIdTest = UUID.randomUUID().toString();
 
-		List<User> users = userRepository.findAllUsersByGroupId(groupId);
+		List<User> users = userRepository.findAllUsersByGroupId(groupIdTest);
 
 		assertThat(users).isEmpty();
 	}
