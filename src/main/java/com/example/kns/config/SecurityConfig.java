@@ -43,7 +43,7 @@ public class SecurityConfig {
 						.requestMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll()
 						.requestMatchers(HttpMethod.GET, "/v3/**").permitAll()
 
-						// ✅ allow websocket endpoints
+
 						.requestMatchers("/ws/**").permitAll()
 						.requestMatchers("/ws-stomp/**").permitAll()
 						.requestMatchers("/ws-stomp").permitAll()

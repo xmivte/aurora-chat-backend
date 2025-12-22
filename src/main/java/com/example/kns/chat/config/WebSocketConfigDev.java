@@ -14,6 +14,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Map;
 
 @Configuration
@@ -48,14 +49,14 @@ public class WebSocketConfigDev implements WebSocketMessageBrokerConfigurer {
 		// SockJS endpoint (kept)
 		registry.addEndpoint("/ws")
 				.addInterceptors(firebaseHandshakeInterceptor)
-				.setAllowedOrigins("*")
+				.setAllowedOrigins(frontendOrigin)
 				.setHandshakeHandler(handler)
 				.withSockJS();
 
-		// ✅ Plain WebSocket endpoint (UPDATED to use same auth + handler)
+
 		registry.addEndpoint("/ws-stomp")
 				.addInterceptors(firebaseHandshakeInterceptor)
-				.setAllowedOrigins("*")
+				.setAllowedOrigins(frontendOrigin)
 				.setHandshakeHandler(handler);
 	}
 
