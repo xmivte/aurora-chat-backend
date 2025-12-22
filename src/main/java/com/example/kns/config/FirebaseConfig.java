@@ -22,12 +22,9 @@ public class FirebaseConfig {
 	@Bean
 	public FirebaseApp firebaseInitializer() throws IOException {
 		if (FirebaseApp.getApps().isEmpty()) {
-			var credentials =
-					GoogleCredentials.fromStream(serviceAccountResource.getInputStream());
+			var credentials = GoogleCredentials.fromStream(serviceAccountResource.getInputStream());
 
-			var options = FirebaseOptions.builder()
-					.setCredentials(credentials)
-					.build();
+			var options = FirebaseOptions.builder().setCredentials(credentials).build();
 
 			return FirebaseApp.initializeApp(options);
 		}

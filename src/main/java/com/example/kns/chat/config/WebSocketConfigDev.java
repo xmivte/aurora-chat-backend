@@ -33,9 +33,7 @@ public class WebSocketConfigDev implements WebSocketMessageBrokerConfigurer {
 
 		var handler = new DefaultHandshakeHandler() {
 			@Override
-			protected Principal determineUser(
-					ServerHttpRequest request,
-					WebSocketHandler wsHandler,
+			protected Principal determineUser(ServerHttpRequest request, WebSocketHandler wsHandler,
 					Map<String, Object> attributes) {
 
 				Object p = attributes.get("principal");
@@ -47,17 +45,11 @@ public class WebSocketConfigDev implements WebSocketMessageBrokerConfigurer {
 		};
 
 		// SockJS endpoint (kept)
-		registry.addEndpoint("/ws")
-				.addInterceptors(firebaseHandshakeInterceptor)
-				.setAllowedOrigins(frontendOrigin)
-				.setHandshakeHandler(handler)
-				.withSockJS();
+		registry.addEndpoint("/ws").addInterceptors(firebaseHandshakeInterceptor).setAllowedOrigins(frontendOrigin)
+				.setHandshakeHandler(handler).withSockJS();
 
-
-		registry.addEndpoint("/ws-stomp")
-				.addInterceptors(firebaseHandshakeInterceptor)
-				.setAllowedOrigins(frontendOrigin)
-				.setHandshakeHandler(handler);
+		registry.addEndpoint("/ws-stomp").addInterceptors(firebaseHandshakeInterceptor)
+				.setAllowedOrigins(frontendOrigin).setHandshakeHandler(handler);
 	}
 
 	@Override

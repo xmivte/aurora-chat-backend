@@ -35,17 +35,12 @@ public class SecurityConfig {
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-		httpSecurity
-				.cors(Customizer.withDefaults())
-				.csrf(csrf -> csrf.disable())
-				.authorizeHttpRequests(auth -> auth
-						.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+		httpSecurity.cors(Customizer.withDefaults()).csrf(csrf -> csrf.disable())
+				.authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 						.requestMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll()
 						.requestMatchers(HttpMethod.GET, "/v3/**").permitAll()
 
-
-						.requestMatchers("/ws/**").permitAll()
-						.requestMatchers("/ws-stomp/**").permitAll()
+						.requestMatchers("/ws/**").permitAll().requestMatchers("/ws-stomp/**").permitAll()
 						.requestMatchers("/ws-stomp").permitAll()
 
 						.anyRequest().authenticated())

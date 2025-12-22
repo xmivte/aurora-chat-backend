@@ -23,8 +23,8 @@ public interface GroupRepository {
 	List<Group> findAllGroupsByUserId(@Param("userId") String userId);
 
 	@Insert("""
-        INSERT INTO db.groups(id, name, image)
-        VALUES (#{id}, #{name}, #{image})
-    """)
+			    INSERT INTO db.groups(id, name, image)
+			    VALUES (#{id}, #{name}, #{image})
+			""")
 	void insert(@Param("id") String id, @Param("name") String name, @Param("image") String image);
 }

@@ -84,11 +84,7 @@ class WebSocketIntegrationTest {
 
 		FirebaseToken token = mock(FirebaseToken.class);
 		when(token.getUid()).thenReturn("userId5");
-		when(token.getClaims()).thenReturn(Map.of(
-				"sub", "userId5",
-				"iat", iat,
-				"exp", exp
-		));
+		when(token.getClaims()).thenReturn(Map.of("sub", "userId5", "iat", iat, "exp", exp));
 		when(firebaseAuth.verifyIdToken(anyString())).thenReturn(token);
 
 		SockJsClient sockJs = new SockJsClient(transports);

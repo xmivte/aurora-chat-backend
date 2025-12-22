@@ -50,24 +50,20 @@ public class HelloControllerIntegrationTest {
 		long exp = iat + 3600;
 
 		FirebaseToken token = mock(FirebaseToken.class);
-		when(token.getClaims()).thenReturn(Map.of(
-				"sub", "userId5",
-				"iat", iat,
-				"exp", exp
-		));
+		when(token.getClaims()).thenReturn(Map.of("sub", "userId5", "iat", iat, "exp", exp));
 		when(firebaseAuth.verifyIdToken(anyString())).thenReturn(token);
 	}
 
 	@Test
 	void sayHello_WithValidRequest_ReturnsGreetingMessage() throws Exception {
-		mockMvc.perform(get("/hello").header("Authorization", "Bearer fake-token").accept(MediaType.TEXT_PLAIN)).andExpect(status().isOk())
-				.andExpect(content().string("Hello from Spring Boot!"));
+		mockMvc.perform(get("/hello").header("Authorization", "Bearer fake-token").accept(MediaType.TEXT_PLAIN))
+				.andExpect(status().isOk()).andExpect(content().string("Hello from Spring Boot!"));
 	}
 
 	@Test
 	void greeting_WithValidRequest_ReturnsApproval() throws Exception {
-		mockMvc.perform(get("/test").header("Authorization", "Bearer fake-token").accept(MediaType.TEXT_PLAIN)).andExpect(status().isOk())
-				.andExpect(content().string("approval"));
+		mockMvc.perform(get("/test").header("Authorization", "Bearer fake-token").accept(MediaType.TEXT_PLAIN))
+				.andExpect(status().isOk()).andExpect(content().string("approval"));
 	}
 
 	@Test

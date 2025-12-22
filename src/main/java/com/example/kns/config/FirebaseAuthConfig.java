@@ -7,8 +7,8 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class FirebaseAuthConfig {
-    @Bean
-    public FirebaseAuth firebaseAuth(FirebaseApp firebaseApp) {
-        return FirebaseAuth.getInstance();
-    }
+	@Bean
+	public FirebaseAuth firebaseAuth(FirebaseApp firebaseApp) {
+		return FirebaseAuth.getInstance();
+	}
 }
