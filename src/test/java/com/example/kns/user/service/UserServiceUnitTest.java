@@ -18,15 +18,12 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class UserServiceUnitTest {
 
-	// creation of a mock
 	@Mock
 	private UserRepository mapper;
 
-	// injection of mock into our service
 	@InjectMocks
 	private UserService userService;
 
-	// mock test
 	@Test
 	void getAll_WithValidGroupId_ReturnsUsers() {
 		String groupId = "group-1";
@@ -40,7 +37,6 @@ class UserServiceUnitTest {
 		verify(mapper).findAllUsersByGroupId(groupId);
 	}
 
-	// negative test - validation
 	@Test
 	void getAll_WithBlankGroupId_ThrowsException() {
 		String blankGroupId = " ";

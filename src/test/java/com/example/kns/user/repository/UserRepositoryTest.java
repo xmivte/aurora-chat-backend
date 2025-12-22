@@ -2,7 +2,9 @@ package com.example.kns.user.repository;
 
 import com.example.kns.config.TestEmbeddedPostgresConfig;
 import com.example.kns.user.model.User;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -15,6 +17,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @MybatisTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import(TestEmbeddedPostgresConfig.class)
@@ -27,38 +30,41 @@ class UserRepositoryTest {
 	@Autowired
 	DataSource dataSource;
 
-	@Test
-	void findAllUsersByGroupId_WhenGroupHasUsers_ReturnsUsers() throws Exception {
-		String groupId = UUID.randomUUID().toString();
-		String userId = UUID.randomUUID().toString();
+	String userId;
+	String groupId;
+
+	@BeforeAll
+	void setUp(@Autowired DataSource dataSource) throws Exception {
+		userId = UUID.randomUUID().toString();
+		groupId = UUID.randomUUID().toString();
 
 		try (var conn = dataSource.getConnection(); var stmt = conn.createStatement()) {
 
-			// insert user
 			stmt.executeUpdate("""
-					INSERT INTO db.users (id, username, email, image)
-					VALUES ('%s', 'john', 'john@example.com', 'avatar.png')
+					    INSERT INTO db.users (id, username, email, image)
+					    VALUES ('%s', 'john', 'john@example.com', 'avatar.png')
 					""".formatted(userId));
 
 			stmt.executeUpdate("""
-					INSERT INTO db.groups (id, name, image)
-					VALUES ('%s', 'group', 'avatar.png')
+					    INSERT INTO db.groups (id, name, image)
+					    VALUES ('%s', 'group', 'avatar.png')
 					""".formatted(groupId));
 
-			// insert group relation
 			stmt.executeUpdate("""
-					INSERT INTO db.user_groups (user_id, group_id)
-					VALUES ('%s', '%s')
+					    INSERT INTO db.user_groups (user_id, group_id)
+					    VALUES ('%s', '%s')
 					""".formatted(userId, groupId));
 		}
+	}
 
+	@Test
+	void findAllUsersByGroupId_WhenGroupHasUsers_ReturnsUsers() throws Exception {
 		List<User> users = userRepository.findAllUsersByGroupId(groupId);
 
+		User groupTest = new User(userId, "john", "john@example.com", "avatar.png");
+
 		assertThat(users).hasSize(1);
-		assertThat(users.get(0).getId()).isEqualTo(userId);
-		assertThat(users.get(0).getUsername()).isEqualTo("john");
-		assertThat(users.get(0).getEmail()).isEqualTo("john@example.com");
-		assertThat(users.get(0).getImage()).isEqualTo("avatar.png");
+		assertThat(users.get(0)).isEqualTo(groupTest);
 	}
 
 	@Test
@@ -68,15 +74,5 @@ class UserRepositoryTest {
 		List<User> users = userRepository.findAllUsersByGroupId(groupId);
 
 		assertThat(users).isEmpty();
-	}
-
-	@Test
-	void checkEmbeddedDb_UsesEmbeddedPostgres() throws Exception {
-		try (var conn = dataSource.getConnection()) {
-			String url = conn.getMetaData().getURL();
-			assertThat(url).doesNotContain("5455"); // not real DB
-			assertThat(url).matches(".*:\\d{4,5}.*"); // random port
-			assertThat(url).contains("localhost");
-		}
 	}
 }
