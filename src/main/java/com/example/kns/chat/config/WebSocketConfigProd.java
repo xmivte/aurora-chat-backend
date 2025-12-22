@@ -10,7 +10,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 
 @Configuration
 @EnableWebSocketMessageBroker
-@Profile("prod")
+@Profile("!local")
 public class WebSocketConfigProd implements WebSocketMessageBrokerConfigurer {
 
 	@Value("${app.frontend.origin}")

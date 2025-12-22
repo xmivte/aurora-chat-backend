@@ -3,6 +3,9 @@ spring:
     activate:
       on-profile: local
 
+firebase:
+  credentials: classpath:firebase/firebase.json
+
 app:
   frontend:
     origin: "http://localhost:5173"

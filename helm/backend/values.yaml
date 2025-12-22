@@ -1,6 +1,10 @@
 nameOverride: ""
 fullnameOverride: ""
 
+firebase:
+  secretName: firebase-credentials
+  secretKey: firebase.json
+
 backend:
   container:
     image: 

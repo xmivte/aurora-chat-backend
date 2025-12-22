@@ -19,7 +19,7 @@ import java.util.Map;
 
 @Configuration
 @EnableWebSocketMessageBroker
-@Profile("!prod")
+@Profile({"local"})
 @RequiredArgsConstructor
 public class WebSocketConfigDev implements WebSocketMessageBrokerConfigurer {
 

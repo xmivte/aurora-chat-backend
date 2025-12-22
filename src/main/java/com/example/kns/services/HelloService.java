@@ -2,6 +2,7 @@ package com.example.kns.services;
 
 import com.example.kns.entities.MockUser;
 import com.example.kns.repositories.HelloRepository;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +13,7 @@ import java.util.List;
 public class HelloService {
 
 	private final MockService mockService;
+	@SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "Spring DI bean")
 	private final HelloRepository repository;
 
 	public String getText() {

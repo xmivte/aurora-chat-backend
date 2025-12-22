@@ -2,13 +2,12 @@ spring:
   config:
     import:
       - "application-local.yml"
-      - "application-prod.yml"
 
   datasource:
-    url: jdbc:postgresql://localhost:5455/postgres
-    username: db_user
-    password: password
-    driver-class-name: org.postgresql.Driver
+   url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5455}/${POSTGRES_DB:postgres}
+   username: ${POSTGRES_USER:db_user}
+   password: ${POSTGRES_PASSWORD:password}
+   driver-class-name: org.postgresql.Driver
   flyway:
     locations: classpath:db/migrations
 
@@ -24,7 +23,7 @@ mybatis:
       - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
 app:
   frontend:
-    origin: "http://localhost:5173"
+    origin: "https://aurora-chat.devbstaging.com"
 
 firebase:
-  credentials: classpath:firebase/firebase.json
+  credentials: /etc/firebase.json

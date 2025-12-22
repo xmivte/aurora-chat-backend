@@ -5,6 +5,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import org.junit.jupiter.api.BeforeEach;
+import com.example.kns.config.TestEmbeddedPostgresConfig;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
@@ -13,8 +14,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
@@ -33,7 +36,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@ActiveProfiles("test")
+@Import(TestEmbeddedPostgresConfig.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 @Import(TestEmbeddedPostgresConfig.class)
