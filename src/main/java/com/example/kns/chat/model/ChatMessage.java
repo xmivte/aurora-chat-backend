@@ -11,9 +11,10 @@ import java.time.OffsetDateTime;
 @Builder
 public class ChatMessage {
 	private Long id;
-	private Long senderId;
+	private String senderId;
 	private String groupId; // Used for both public + private chats
 	private String content; // Future: needs encryption
 	private OffsetDateTime createdAt;
 	private boolean sent; // Poller checks if the message has been sent
+	private String username;
 }
