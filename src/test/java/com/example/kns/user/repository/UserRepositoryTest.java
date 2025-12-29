@@ -38,48 +38,47 @@ class UserRepositoryTest {
 	String groupId;
 
 	@BeforeAll
-	void setUp(@Autowired DataSource dataSource) throws Exception {
+	void setUp() throws Exception {
 		userId = "userID1";
 		groupId = "groupId1";
 
 		try (var conn = dataSource.getConnection()) {
 
 			try (var userStmt = conn.prepareStatement("""
-					    INSERT INTO db.users (id, username, email, image)
-					    VALUES (?, 'john', 'john@example.com', 'avatar.png')
+					INSERT INTO db.users (id, username, email, image)
+					VALUES (?, 'john', 'john@example.com', 'avatar.png')
 					""")) {
 				userStmt.setString(1, userId);
 				userStmt.executeUpdate();
 			}
 
 			try (var groupStmt = conn.prepareStatement("""
-					    INSERT INTO db.groups (id, name, image)
-					    VALUES (?, 'group', 'avatar.png')
+					INSERT INTO db.groups (id, name, image)
+					VALUES (?, 'group', 'avatar.png')
 					""")) {
 				groupStmt.setString(1, groupId);
 				groupStmt.executeUpdate();
 			}
 
 			try (var userGroupStmt = conn.prepareStatement("""
-					    INSERT INTO db.user_groups (user_id, group_id)
-					    VALUES (?, ?)
+					INSERT INTO db.user_groups (user_id, group_id)
+					VALUES (?, ?)
 					""")) {
 				userGroupStmt.setString(1, userId);
 				userGroupStmt.setString(2, groupId);
 				userGroupStmt.executeUpdate();
 			}
 		}
-
 	}
 
 	@Test
-	void findAllUsersByGroupId_WhenGroupHasUsers_ReturnsUsers() throws Exception {
+	void findAllUsersByGroupId_WhenGroupHasUsers_ReturnsUsers() {
 		List<User> users = userRepository.findAllUsersByGroupId(groupId);
 
-		User groupTest = new User(userId, "john", "john@example.com", "avatar.png");
+		User expected = new User(userId, "john", "john@example.com", "avatar.png");
 
 		assertThat(users).hasSize(1);
-		assertThat(users.get(0)).isEqualTo(groupTest);
+		assertThat(users.get(0)).isEqualTo(expected);
 	}
 
 	@Test

@@ -10,8 +10,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtException;
@@ -39,13 +39,9 @@ public class SecurityConfig {
 	public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
 		httpSecurity.cors(Customizer.withDefaults()).csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-						.requestMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll()
-						.requestMatchers(HttpMethod.GET, "/v3/**").permitAll()
-
-						.requestMatchers("/ws/**").permitAll().requestMatchers("/ws-stomp/**").permitAll()
-						.requestMatchers("/ws-stomp").permitAll()
-
-						.anyRequest().authenticated())
+						.requestMatchers("/swagger-ui/**", "/v3/**").permitAll()
+						.requestMatchers("/ws/**", "/ws-stomp/**", "/ws-stomp").permitAll().anyRequest()
+						.authenticated())
 				.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.decoder(firebaseJwtDecoder())));
 
 		return httpSecurity.build();

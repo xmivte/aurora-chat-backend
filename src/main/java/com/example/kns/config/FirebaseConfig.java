@@ -3,15 +3,12 @@ package com.example.kns.config;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
-import jakarta.annotation.PostConstruct;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Profile;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.Resource;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -21,6 +18,7 @@ import java.io.InputStream;
 @Configuration
 @ConditionalOnProperty(name = "firebase.enabled", havingValue = "true", matchIfMissing = true)
 public class FirebaseConfig {
+
 	@Bean
 	@Profile("local")
 	public FirebaseApp firebaseAppLocal(@Value("${firebase.credentials}") Resource resource) throws IOException {
@@ -36,16 +34,11 @@ public class FirebaseConfig {
 			return initializeFirebase(stream);
 		}
 	}
-	@Value("${firebase.credentials}")
-	private Resource serviceAccountResource;
 
-	// @Bean
-	public FirebaseApp initializeFirebase(InputStream serviceAccount) throws IOException {
+	private FirebaseApp initializeFirebase(InputStream serviceAccount) throws IOException {
 		if (FirebaseApp.getApps().isEmpty()) {
 			var credentials = GoogleCredentials.fromStream(serviceAccount);
-
 			var options = FirebaseOptions.builder().setCredentials(credentials).build();
-
 			return FirebaseApp.initializeApp(options);
 		}
 		return FirebaseApp.getInstance();
