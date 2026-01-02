@@ -1,9 +1,9 @@
 package com.example.kns.controllers;
 
+import com.example.kns.chat.service.ChatMessageService;
 import com.example.kns.config.TestEmbeddedPostgresConfig;
 import com.example.kns.chat.dto.ChatMessageDTO;
 import com.example.kns.chat.model.ChatMessage;
-import com.example.kns.chat.service.ChatMessageService;
 import com.example.kns.group.repository.GroupRepository;
 import com.example.kns.user.repository.UserRepository;
 import com.example.kns.user_groups.repository.UserGroupRepository;
