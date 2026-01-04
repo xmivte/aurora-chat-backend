@@ -81,7 +81,7 @@ class UserRepositoryTest {
 		assertThat(users).hasSize(1);
 		assertThat(users.get(0)).isEqualTo(groupTest);
 	}
-
+	
 	@Test
 	void findAllUsersByGroupId_WhenGroupIsEmpty_ReturnsEmptyList() {
 		String groupIdTest = UUID.randomUUID().toString();
@@ -89,5 +89,12 @@ class UserRepositoryTest {
 		List<User> users = userRepository.findAllUsersByGroupId(groupIdTest);
 
 		assertThat(users).isEmpty();
+	}
+	
+	@Test
+	void findAllUsers_WhenUsersExist_ReturnAllUsers(){
+	List<User> users = userRepository.findAllUsers(); 
+		assertThat(users).isNotEmpty();
+		assertThat(users).extracting(User::getId).contains(userId);
 	}
 }

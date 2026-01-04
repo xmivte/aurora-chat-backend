@@ -22,10 +22,19 @@ public interface UserRepository {
 			""")
 	List<User> findAllUsersByGroupId(@Param("groupId") String groupId);
 
+	@Select(
+		"""
+		SELECT id, username, email, image
+		FROM db.users
+		"""
+	)
+	List<User> findAllUsers();
+
 	@Insert("""
 			    INSERT INTO db.users(id, username, email, image)
 			    VALUES (#{id}, #{username}, #{email}, #{image})
 			""")
 	void insert(@Param("id") String id, @Param("username") String username, @Param("email") String email,
 			@Param("image") String image);
+
 }

@@ -25,4 +25,10 @@ public class UserService {
 		}
 		return mapper.findAllUsersByGroupId(groupId);
 	}
+
+	public List<User> getAllUsers()
+	{
+		return mapper.findAllUsers();
+	}
+
 }

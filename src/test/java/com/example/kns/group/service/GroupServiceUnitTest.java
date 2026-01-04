@@ -22,6 +22,9 @@ public class GroupServiceUnitTest {
 	@Mock
 	private GroupRepository mapper;
 
+	@Mock 
+	private UserGroupRepository userGroupRepository;
+
 	@InjectMocks
 	private GroupService groupService;
 
@@ -45,4 +48,28 @@ public class GroupServiceUnitTest {
 		assertThatThrownBy(() -> groupService.getAll(blankUserId)).isInstanceOf(IllegalArgumentException.class)
 				.hasMessage("User id is blank");
 	}
+
+	@Test
+void createGroup_InsertsGroupAndUserLinks() {
+    String myUserId = "userA";
+    String otherUserId = "userB";
+
+    var result = groupService.createGroup(myUserId, otherUserId);
+
+    // Validate DTO
+    assertThat(result.getId()).isNotBlank();
+    assertThat(result.getName()).isEqualTo("GroupChat");
+    assertThat(result.getImage()).isNull();
+
+    // Validate repository calls
+    verify(mapper).insert(
+            result.getId(),
+            "GroupChat",
+            null
+    );
+
+    verify(userGroupRepository).insert(myUserId, result.getId());
+    verify(userGroupRepository).insert(otherUserId, result.getId());
+}
+
 }

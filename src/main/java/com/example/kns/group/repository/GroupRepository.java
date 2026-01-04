@@ -27,4 +27,6 @@ public interface GroupRepository {
 			    VALUES (#{id}, #{name}, #{image})
 			""")
 	void insert(@Param("id") String id, @Param("name") String name, @Param("image") String image);
+
+
 }

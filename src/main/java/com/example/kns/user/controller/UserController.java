@@ -24,4 +24,9 @@ public class UserController {
 				user -> UserDTO.builder().id(user.getId()).username(user.getUsername()).image(user.getImage()).build())
 				.toList();
 	}
+
+	@GetMapping("/all")
+	public List<UserDTO> getAllUsers(){
+		return service.getAllUsers().stream().map(user->UserDTO.builder().id(user.getId()).username(user.getUsername()).image(user.getImage()).build()).toList();
+	}
 }
