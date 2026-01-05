@@ -2,6 +2,7 @@ package com.example.kns.group.repository;
 
 import com.example.kns.config.TestEmbeddedPostgresConfig;
 import com.example.kns.group.model.Group;
+import com.example.kns.group.dto.GroupUserRow;
 import com.example.kns.user.model.User;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -90,4 +91,31 @@ public class GroupRepositoryTest {
 
 		assertThat(groups).isEmpty();
 	}
+
+	@Test
+	void findGroupsWithUsers_WhenUserHasGroups_ReturnsFlattenedRows()
+	{
+		List<GroupUserRow> rows = groupRepository.findGroupsWithUsers(userId);
+
+		assertThat(rows).hasSize(1);
+
+		GroupUserRow row = rows.get(0);
+
+		assertThat(row.getGroupId()).isEqualTo(groupId);
+		assertThat(row.getGroupName()).isEqualTo("group");
+		assertThat(row.getGroupImage()).isEqualTo("avatar.png");
+		assertThat(row.getUserId()).isEqualTo(userId);
+		assertThat(row.getUserName()).isEqualTo("john");
+		assertThat(row.getUserImage()).isEqualTo("avatar.png");
+	}
+
+	@Test
+	void findGroupsWithUsers_WhenNoGroups_ReturnsEmptyList(){
+		String nonExistingUser = UUID.randomUUID().toString();
+
+		List<GroupUserRow> rows = groupRepository.findGroupsWithUsers(nonExistingUser);
+
+		assertThat(rows).isEmpty();
+	}
+
 }

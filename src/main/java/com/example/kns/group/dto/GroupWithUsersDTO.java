@@ -1,6 +1,10 @@
 package com.example.kns.group.dto;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 import java.util.List;
 import com.example.kns.user.dto.UserDTO;
 
