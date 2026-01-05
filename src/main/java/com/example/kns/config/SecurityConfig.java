@@ -40,10 +40,10 @@ public class SecurityConfig {
 		httpSecurity.cors(Customizer.withDefaults()).csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 						.requestMatchers("/swagger-ui/**", "/v3/**").permitAll()
-						.requestMatchers("/ws/**", "/ws-stomp/**", "/ws-stomp").permitAll().anyRequest()
+						.requestMatchers("/ws/**", "/ws-stomp/**", "/ws-stomp").permitAll()
+						.requestMatchers("/api/groups/*/pinned-messages/**").permitAll().anyRequest()
 						.authenticated())
 				.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.decoder(firebaseJwtDecoder())));
-
 		return httpSecurity.build();
 	}
 
