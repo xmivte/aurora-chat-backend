@@ -57,6 +57,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.security:spring-security-messaging'
 	implementation 'com.github.spotbugs:spotbugs-annotations:4.9.8'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
 }
 
