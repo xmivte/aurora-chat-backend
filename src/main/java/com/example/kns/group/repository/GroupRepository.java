@@ -1,12 +1,10 @@
 package com.example.kns.group.repository;
 
 import com.example.kns.group.model.Group;
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Options;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
@@ -23,8 +21,8 @@ public interface GroupRepository {
 	List<Group> findAllGroupsByUserId(@Param("userId") String userId);
 
 	@Insert("""
-			    INSERT INTO db.groups(id, name, image)
-			    VALUES (#{id}, #{name}, #{image})
+			INSERT INTO db.groups(id, name, image)
+			VALUES (#{id}, #{name}, #{image})
 			""")
 	void insert(@Param("id") String id, @Param("name") String name, @Param("image") String image);
 }
