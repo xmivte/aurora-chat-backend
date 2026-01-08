@@ -39,9 +39,11 @@ public class SecurityConfig {
 	public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
 		httpSecurity.cors(Customizer.withDefaults()).csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-						.requestMatchers("/swagger-ui/**", "/v3/**").permitAll()
-						.requestMatchers("/ws/**", "/ws-stomp/**", "/ws-stomp").permitAll()
-						.requestMatchers("/api/groups/*/pinned-messages/**").permitAll().anyRequest()
+						.requestMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll()
+						.requestMatchers(HttpMethod.GET, "/v3/**").permitAll().requestMatchers(HttpMethod.GET, "/ws/**")
+						.permitAll().requestMatchers("/ws/**").permitAll().requestMatchers("/ws-stomp/**").permitAll()
+						.requestMatchers("/ws-stomp").permitAll().requestMatchers(HttpMethod.GET, "/hello", "/test")
+						.permitAll().requestMatchers("/api/groups/*/pinned-messages/**").permitAll().anyRequest()
 						.authenticated())
 				.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.decoder(firebaseJwtDecoder())));
 		return httpSecurity.build();
