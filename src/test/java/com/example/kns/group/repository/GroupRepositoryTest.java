@@ -2,11 +2,8 @@ package com.example.kns.group.repository;
 
 import com.example.kns.config.TestEmbeddedPostgresConfig;
 import com.example.kns.group.model.Group;
-<<<<<<< HEAD
 import com.example.kns.group.dto.GroupUserRow;
 import com.example.kns.user.model.User;
-=======
->>>>>>> origin/main
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;

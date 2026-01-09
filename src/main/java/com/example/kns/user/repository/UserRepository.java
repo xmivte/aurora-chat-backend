@@ -34,9 +34,4 @@ public interface UserRepository {
 			""")
 	void insert(@Param("id") String id, @Param("username") String username, @Param("email") String email,
 			@Param("image") String image);
-<<<<<<< HEAD
-
 }
-=======
-}
->>>>>>> origin/main
