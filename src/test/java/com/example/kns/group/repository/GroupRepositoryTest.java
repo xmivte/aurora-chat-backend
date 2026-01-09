@@ -2,23 +2,26 @@ package com.example.kns.group.repository;
 
 import com.example.kns.config.TestEmbeddedPostgresConfig;
 import com.example.kns.group.model.Group;
+<<<<<<< HEAD
 import com.example.kns.group.dto.GroupUserRow;
 import com.example.kns.user.model.User;
+=======
+>>>>>>> origin/main
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.TestPropertySource;
-import org.junit.jupiter.api.TestInstance;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
-import java.util.UUID;
 import java.util.List;
+import java.util.UUID;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -40,7 +43,7 @@ public class GroupRepositoryTest {
 	String groupId;
 
 	@BeforeAll
-	void setUp(@Autowired DataSource dataSource) throws Exception {
+	void setUp() throws Exception {
 		userId = UUID.randomUUID().toString();
 		groupId = UUID.randomUUID().toString();
 
@@ -69,18 +72,16 @@ public class GroupRepositoryTest {
 				userGroupStmt.executeUpdate();
 			}
 		}
-
 	}
 
 	@Test
-	void findAllGroupsByUserId_WhenUserHasGroups_ReturnsGroups() throws Exception {
-
+	void findAllGroupsByUserId_WhenUserHasGroups_ReturnsGroups() {
 		List<Group> groups = groupRepository.findAllGroupsByUserId(userId);
 
-		Group groupTest = new Group(groupId, "group", "avatar.png");
+		Group expected = new Group(groupId, "group", "avatar.png");
 
 		assertThat(groups).hasSize(1);
-		assertThat(groups.get(0)).isEqualTo(groupTest);
+		assertThat(groups.get(0)).isEqualTo(expected);
 	}
 
 	@Test

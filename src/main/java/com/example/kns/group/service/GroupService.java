@@ -16,6 +16,8 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
