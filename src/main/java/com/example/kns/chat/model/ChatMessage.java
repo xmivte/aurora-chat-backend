@@ -1,10 +1,12 @@
 package com.example.kns.chat.model;
 
+import com.example.kns.file.model.FileAttachment;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -17,4 +19,5 @@ public class ChatMessage {
 	private OffsetDateTime createdAt;
 	private boolean sent; // Poller checks if the message has been sent
 	private String username;
+    private List<FileAttachment> fileAttachments;
 }
