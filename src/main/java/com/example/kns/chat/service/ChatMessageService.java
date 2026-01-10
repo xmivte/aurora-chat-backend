@@ -58,6 +58,12 @@ public class ChatMessageService {
 	}
 
 	public List<ChatMessage> getAll(@NotBlank String groupId) {
-		return repository.findAllMessagesByGroupId(groupId);
+        List<ChatMessage> messages =  repository.findAllMessagesByGroupId(groupId);
+
+        for(ChatMessage msg : messages) {
+            List<FileAttachment> attachments = fileAttachmentRepository.findByMessageId(msg.getId());
+            msg.setFileAttachments(attachments);
+        }
+		return messages;
 	}
 }
