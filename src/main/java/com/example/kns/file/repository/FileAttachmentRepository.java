@@ -13,9 +13,9 @@ import java.util.List;
 public interface FileAttachmentRepository {
     @Insert("""
             INSERT INTO db.file_attachments(message_id, file_name, original_file_name,
-                                            file_url, file_type, file_size, uploaded_at, expires_at)
+                                            file_url, file_type, file_size, expires_at)
             VALUES (#{messageId}, #{fileName}, #{originalFileName},
-                    #{fileUrl}, #{fileType}, #{fileSize}, #{uploadedAt}, #{expiresAt})
+                    #{fileUrl}, #{fileType}, #{fileSize}, #{expiresAt})
             """)
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void insert(FileAttachment fileAttachment);
