@@ -30,4 +30,13 @@ public interface FileAttachmentRepository {
             ORDER BY uploaded_at ASC
             """)
     List<FileAttachment> findByMessageId(@Param("messageId") Long messageId);
+
+    @Select("""
+            SELECT id, message_id AS messageId, file_name AS fileName,
+                   original_file_name AS originalFileName, file_url AS fileUrl,
+                   file_type AS fileType, file_size AS fileSize,
+                   uploaded_at AS uploadedAt, expires_at AS expiresAt
+            FROM db.file_attachments WHERE id = #{fileId}
+            """)
+    FileAttachment findById(@Param("fileId") Long fileId);
 }

@@ -44,4 +44,13 @@ public interface ChatMessagesRepository {
 			ORDER BY created_at ASC
 			""")
 	List<ChatMessage> findAllMessagesByGroupId(@Param("groupId") String groupId);
+
+    @Select("""
+        SELECT m.id, m.sender_id AS senderId, m.group_id AS groupId, m.content, 
+               m.created_at AS createdAt, m.sent, u.username
+        FROM db.chat_messages m
+        JOIN db.users u ON u.id = m.sender_id
+        WHERE m.id = #{messageId}
+        """)
+    ChatMessage findById(@Param("messageId") Long messageId);
 }
