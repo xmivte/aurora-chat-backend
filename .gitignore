@@ -58,6 +58,9 @@ Thumbs.db
 # Firebase credentials file
 firebase.json
 
+# Cloudinary credentials file
+cloudinary.json
+
 # Claude local settings
 .claude/settings.local.json
 
