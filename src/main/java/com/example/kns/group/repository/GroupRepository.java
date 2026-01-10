@@ -20,6 +20,13 @@ public interface GroupRepository {
 			""")
 	List<Group> findAllGroupsByUserId(@Param("userId") String userId);
 
+    @Select("""
+            SELECT COUNT(*) > 0
+            FROM db.user_groups
+            WHERE user_id = #{userId} AND group_id = #{groupId}
+            """)
+    boolean isUserInGroup(@Param("userId") String userId, @Param("groupId") String groupId);
+
 	@Insert("""
 			INSERT INTO db.groups(id, name, image)
 			VALUES (#{id}, #{name}, #{image})
