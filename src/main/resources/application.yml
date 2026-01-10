@@ -27,5 +27,8 @@ app:
 
 firebase:
   credentials: /etc/firebase.json
-  storage:
-    bucket: "aurora-chat-devb.appspot.com"
+
+cloudinary:
+  credentials: /etc/cloudinary.json
+
+

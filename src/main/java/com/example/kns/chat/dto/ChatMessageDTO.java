@@ -29,7 +29,6 @@ public class ChatMessageDTO {
 	@NotBlank(message = "groupId is blank")
 	private String groupId;
 
-	@NotBlank(message = "content is empty")
 	@Size(max = 2000, message = "Message is too long (max 2000 chars)")
 	private String content;
 
