@@ -18,7 +18,7 @@ import java.time.OffsetDateTime;
 public class FileMetadataDTO {
 
     @NotBlank(message = "File URL is required")
-    private String fileURL;
+    private String fileUrl;
 
     @NotBlank(message = "File name is required")
     private String fileName;
