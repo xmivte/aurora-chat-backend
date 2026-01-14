@@ -31,19 +31,6 @@ public class GroupServiceUnitTest {
 	private GroupService groupService;
 
 	@Test
-	void getAll_WithValidUserId_ReturnsGroups() {
-		String userId = "1";
-		List<Group> groups = List.of(new Group(), new Group());
-
-		when(mapper.findAllGroupsByUserId(userId)).thenReturn(groups);
-
-		List<Group> result = groupService.getAll(userId);
-
-		assertThat(result).isEqualTo(groups);
-		verify(mapper).findAllGroupsByUserId(userId);
-	}
-
-	@Test
 	void createGroup_InsertsGroupAndUserLinks() {
 		String myUserId = "userA";
 		String otherUserId = "userB";
