@@ -38,30 +38,17 @@ public class GroupService {
 	public List<GroupWithUsersDTO> getAllWithUsers(@NotBlank String userId) {
 		List<GroupUserRow> rows = mapper.findGroupsWithUsers(userId);
 
-		return rows.stream()
-		.collect(Collectors.groupingBy(GroupUserRow::getGroupId))
-		.entrySet()
-		.stream()
-		.map(entry -> {
+		return rows.stream().collect(Collectors.groupingBy(GroupUserRow::getGroupId)).entrySet().stream().map(entry -> {
 			var groupRows = entry.getValue();
 			var first = groupRows.get(0);
 
-			List<UserDTO> users = groupRows.stream()
-			.map(r-> UserDTO.builder()
-			.id(r.getUserId())
-			.username(r.getUserName())
-			.image(r.getUserImage())
-			.build())
-			.toList();
+			List<UserDTO> users = groupRows.stream().map(
+					r -> UserDTO.builder().id(r.getUserId()).username(r.getUsername()).image(r.getUserImage()).build())
+					.toList();
 
-			return GroupWithUsersDTO.builder()
-			.id(first.getGroupId())
-			.name(first.getGroupName())
-			.image(first.getGroupImage())
-			.users(users)
-			.build();
-		})
-		.toList();
+			return GroupWithUsersDTO.builder().id(first.getGroupId()).name(first.getGroupName())
+					.image(first.getGroupImage()).users(users).build();
+		}).toList();
 	}
 
 	public GroupDTO createGroup(@NotBlank String myUserId, @NotBlank String otherUserId) {
@@ -70,9 +57,7 @@ public class GroupService {
 		group.setName("Group Chat");
 		group.setImage(null);
 		mapper.insert(group.getId(), group.getName(), group.getImage());
-		userGroupRepository.insertMany(
-			List.of(myUserId, otherUserId), group.getId()
-		);
+		userGroupRepository.insertMany(List.of(myUserId, otherUserId), group.getId());
 
 		return GroupDTO.builder().id(group.getId()).name(group.getName()).image(group.getImage()).build();
 	}

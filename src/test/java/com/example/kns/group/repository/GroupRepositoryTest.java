@@ -91,8 +91,7 @@ public class GroupRepositoryTest {
 	}
 
 	@Test
-	void findGroupsWithUsers_WhenUserHasGroups_ReturnsFlattenedRows()
-	{
+	void findGroupsWithUsers_WhenUserHasGroups_ReturnsFlattenedRows() {
 		List<GroupUserRow> rows = groupRepository.findGroupsWithUsers(userId);
 
 		assertThat(rows).hasSize(1);
@@ -103,12 +102,12 @@ public class GroupRepositoryTest {
 		assertThat(row.getGroupName()).isEqualTo("group");
 		assertThat(row.getGroupImage()).isEqualTo("avatar.png");
 		assertThat(row.getUserId()).isEqualTo(userId);
-		assertThat(row.getUserName()).isEqualTo("john");
+		assertThat(row.getUsername()).isEqualTo("john");
 		assertThat(row.getUserImage()).isEqualTo("avatar.png");
 	}
 
 	@Test
-	void findGroupsWithUsers_WhenNoGroups_ReturnsEmptyList(){
+	void findGroupsWithUsers_WhenNoGroups_ReturnsEmptyList() {
 		String nonExistingUser = UUID.randomUUID().toString();
 
 		List<GroupUserRow> rows = groupRepository.findGroupsWithUsers(nonExistingUser);

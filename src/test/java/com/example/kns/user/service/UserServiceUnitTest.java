@@ -46,13 +46,13 @@ class UserServiceUnitTest {
 	}
 
 	@Test
-	void getAllUsers_ReturnsAllUsers(){
+	void getAllUsers_ReturnsAllUsers() {
 		List<User> users = List.of(new User(), new User());
-		
+
 		when(mapper.findAllUsers()).thenReturn(users);
-		
+
 		List<User> result = userService.getAllUsers();
-		
+
 		assertThat(result).isEqualTo(users);
 		verify(mapper).findAllUsers();
 	}

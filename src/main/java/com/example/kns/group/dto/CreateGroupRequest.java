@@ -5,9 +5,9 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
 @Data
-@NoArgsConstructor 
+@NoArgsConstructor
 @AllArgsConstructor
 public class CreateGroupRequest {
-    private String myUserId;
-    private String otherUserId;
+	private String myUserId;
+	private String otherUserId;
 }

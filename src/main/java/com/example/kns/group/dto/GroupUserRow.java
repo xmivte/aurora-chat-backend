@@ -6,10 +6,10 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class GroupUserRow {
-    private String groupId;
-    private String groupName;
-    private String groupImage;
-    private String userId;
-    private String userName;
-    private String userImage;
+	private String groupId;
+	private String groupName;
+	private String groupImage;
+	private String userId;
+	private String username;
+	private String userImage;
 }

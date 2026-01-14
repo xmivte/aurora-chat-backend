@@ -62,24 +62,18 @@ public class GroupServiceUnitTest {
 		assertThat(result.getName()).isEqualTo("Group Chat");
 		assertThat(result.getImage()).isNull();
 
-		verify(mapper).insert(
-				result.getId(),
-				"Group Chat",
-				null);
+		verify(mapper).insert(result.getId(), "Group Chat", null);
 
 		verify(userGroupRepository).insertMany(List.of(myUserId, otherUserId), result.getId());
 	}
-  
+
 	@Test
-	void getAllWithUsers_GroupRowsIntoNestedDTOs()
-	{
+	void getAllWithUsers_GroupRowsIntoNestedDTOs() {
 		String userId = "1";
 
-		List<GroupUserRow> rows = List.of(
-			new GroupUserRow("g1", "Group 1", "img1", "u1", "Alice", "a.png"),
-			new GroupUserRow("g1", "Group 1", "img1", "u2", "Bob", "p.png"),
-			new GroupUserRow("g2", "Group 2", "img2", "u3", "Charlie", "c.png")
-		);
+		List<GroupUserRow> rows = List.of(new GroupUserRow("g1", "Group 1", "img1", "u1", "Alice", "a.png"),
+				new GroupUserRow("g1", "Group 1", "img1", "u2", "Bob", "p.png"),
+				new GroupUserRow("g2", "Group 2", "img2", "u3", "Charlie", "c.png"));
 
 		when(mapper.findGroupsWithUsers(userId)).thenReturn(rows);
 

@@ -27,11 +27,11 @@ public interface GroupRepository {
 			g.name AS groupName,
 			g.image AS groupImage,
 			u.id AS userId,
-			u.username AS userName,
+			u.username AS username,
 			u.image AS userImage
-			FROM db.groups g 
-			JOIN db.user_groups ug_me ON ug_me.group_id = g.id 
-			JOIN db.user_groups ug_all ON ug_all.group_id = g.id 
+			FROM db.groups g
+			JOIN db.user_groups ug_me ON ug_me.group_id = g.id
+			JOIN db.user_groups ug_all ON ug_all.group_id = g.id
 			JOIN db.users u ON u.id = ug_all.user_id
 			WHERE ug_me.user_id = #{userId}
 			""")

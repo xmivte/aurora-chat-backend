@@ -17,6 +17,5 @@ public interface UserGroupRepository {
 			    </foreach>
 			</script>
 			""")
-	void insertMany(@Param("userIds") List<String> userIds,
-			@Param("groupId") String groupId);
+	void insertMany(@Param("userIds") List<String> userIds, @Param("groupId") String groupId);
 }
