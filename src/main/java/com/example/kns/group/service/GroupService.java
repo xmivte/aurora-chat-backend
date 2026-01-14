@@ -31,10 +31,6 @@ public class GroupService {
 	private final GroupRepository mapper;
 	private final UserGroupRepository userGroupRepository;
 
-	public List<Group> getAll(@NotBlank String userId) {
-		return mapper.findAllGroupsByUserId(userId);
-	}
-
 	public List<GroupWithUsersDTO> getAllWithUsers(@NotBlank String userId) {
 		List<GroupUserRow> rows = mapper.findGroupsWithUsers(userId);
 

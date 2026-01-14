@@ -44,14 +44,6 @@ public class GroupServiceUnitTest {
 	}
 
 	@Test
-	void getAll_WithBlankUserId_ThrowsException() {
-		String blankUserId = " ";
-
-		assertThatThrownBy(() -> groupService.getAll(blankUserId)).isInstanceOf(IllegalArgumentException.class)
-				.hasMessage("User id is blank");
-	}
-
-	@Test
 	void createGroup_InsertsGroupAndUserLinks() {
 		String myUserId = "userA";
 		String otherUserId = "userB";
