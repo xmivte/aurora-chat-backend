@@ -44,4 +44,16 @@ class UserServiceUnitTest {
 		assertThatThrownBy(() -> userService.getAll(blankGroupId)).isInstanceOf(IllegalArgumentException.class)
 				.hasMessage("Group id is blank");
 	}
+
+	@Test
+	void getAllUsers_ReturnsAllUsers() {
+		List<User> users = List.of(new User(), new User());
+
+		when(mapper.findAllUsers()).thenReturn(users);
+
+		List<User> result = userService.getAllUsers();
+
+		assertThat(result).isEqualTo(users);
+		verify(mapper).findAllUsers();
+	}
 }

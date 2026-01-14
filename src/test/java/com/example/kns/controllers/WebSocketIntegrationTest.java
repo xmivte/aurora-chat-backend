@@ -77,7 +77,7 @@ class WebSocketIntegrationTest {
 	void seedDb() {
 		userRepository.insert("userId5", "test-user", "userId5@test.com", null);
 		groupRepository.insert("room1", "room1", null);
-		userGroupRepository.insert("userId5", "room1");
+		userGroupRepository.insertMany(List.of("userId5"), "room1");
 	}
 
 	@BeforeEach

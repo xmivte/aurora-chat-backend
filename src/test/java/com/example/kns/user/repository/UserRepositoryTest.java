@@ -89,4 +89,11 @@ class UserRepositoryTest {
 
 		assertThat(users).isEmpty();
 	}
+
+	@Test
+	void findAllUsers_WhenUsersExist_ReturnAllUsers() {
+		List<User> users = userRepository.findAllUsers();
+		assertThat(users).isNotEmpty();
+		assertThat(users).extracting(User::getId).contains(userId);
+	}
 }
