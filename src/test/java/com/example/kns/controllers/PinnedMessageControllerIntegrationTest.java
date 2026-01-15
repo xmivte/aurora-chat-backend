@@ -53,7 +53,7 @@ class PinnedMessageControllerIntegrationTest {
 	FirebaseAuth firebaseAuth;
 
 	@BeforeEach
-	void setup() throws FirebaseAuthException {
+	void setUp() throws FirebaseAuthException {
 		userRepository.insert("userId5", "test-user", "userId5@test.com", null);
 		groupRepository.insert("group-1", "group-1", null);
 

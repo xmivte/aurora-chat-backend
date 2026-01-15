@@ -4,22 +4,24 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import lombok.AllArgsConstructor;
-import org.springframework.web.socket.server.HandshakeInterceptor;
-import org.springframework.stereotype.Component;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
-import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.http.server.ServletServerHttpRequest;
-import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.stereotype.Component;
+import org.springframework.web.socket.WebSocketHandler;
+import org.springframework.web.socket.server.HandshakeInterceptor;
+
+import java.security.Principal;
 import java.util.Map;
-import java.util.List;
 
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "Spring DI bean")
 public class FirebaseHandshakeInterceptor implements HandshakeInterceptor {
+
+	public static final String ATTR_PRINCIPAL = "principal";
 
 	private final FirebaseAuth firebaseAuth;
 
@@ -27,31 +29,32 @@ public class FirebaseHandshakeInterceptor implements HandshakeInterceptor {
 	public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler,
 			Map<String, Object> attributes) {
 
-		if (request instanceof ServletServerHttpRequest servletRequest) {
-			HttpServletRequest req = servletRequest.getServletRequest();
-
-			String token = req.getParameter("token");
-			if (token == null || token.isEmpty()) {
-				return false; // reject unauthenticated WS handshake
-			}
-
-			try {
-				FirebaseToken decodedToken = firebaseAuth.verifyIdToken(token);
-
-				UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-						decodedToken.getUid(), null, List.of());
-
-				attributes.put("principal", auth);
-			} catch (FirebaseAuthException e) {
-				return false;
-			}
+		if (!(request instanceof ServletServerHttpRequest servletRequest)) {
+			return false;
 		}
-		return true;
+
+		HttpServletRequest req = servletRequest.getServletRequest();
+		String token = req.getParameter("token");
+
+		if (token == null || token.isBlank()) {
+			return false;
+		}
+
+		try {
+			FirebaseToken decoded = firebaseAuth.verifyIdToken(token);
+			String uid = decoded.getUid();
+
+			attributes.put(ATTR_PRINCIPAL, (Principal) () -> uid);
+
+			return true;
+		} catch (FirebaseAuthException e) {
+			return false;
+		}
 	}
 
 	@Override
 	public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler,
 			Exception ex) {
-
+		// no-op
 	}
 }

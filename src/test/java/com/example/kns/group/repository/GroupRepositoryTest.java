@@ -2,22 +2,23 @@ package com.example.kns.group.repository;
 
 import com.example.kns.config.TestEmbeddedPostgresConfig;
 import com.example.kns.group.model.Group;
+import com.example.kns.group.dto.GroupUserRow;
 import com.example.kns.user.model.User;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.TestPropertySource;
-import org.junit.jupiter.api.TestInstance;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
-import java.util.UUID;
 import java.util.List;
+import java.util.UUID;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -39,7 +40,7 @@ public class GroupRepositoryTest {
 	String groupId;
 
 	@BeforeAll
-	void setUp(@Autowired DataSource dataSource) throws Exception {
+	void setUp() throws Exception {
 		userId = UUID.randomUUID().toString();
 		groupId = UUID.randomUUID().toString();
 
@@ -68,18 +69,16 @@ public class GroupRepositoryTest {
 				userGroupStmt.executeUpdate();
 			}
 		}
-
 	}
 
 	@Test
-	void findAllGroupsByUserId_WhenUserHasGroups_ReturnsGroups() throws Exception {
-
+	void findAllGroupsByUserId_WhenUserHasGroups_ReturnsGroups() {
 		List<Group> groups = groupRepository.findAllGroupsByUserId(userId);
 
-		Group groupTest = new Group(groupId, "group", "avatar.png");
+		Group expected = new Group(groupId, "group", "avatar.png");
 
 		assertThat(groups).hasSize(1);
-		assertThat(groups.get(0)).isEqualTo(groupTest);
+		assertThat(groups.get(0)).isEqualTo(expected);
 	}
 
 	@Test
@@ -90,4 +89,30 @@ public class GroupRepositoryTest {
 
 		assertThat(groups).isEmpty();
 	}
+
+	@Test
+	void findGroupsWithUsers_WhenUserHasGroups_ReturnsFlattenedRows() {
+		List<GroupUserRow> rows = groupRepository.findGroupsWithUsers(userId);
+
+		assertThat(rows).hasSize(1);
+
+		GroupUserRow row = rows.get(0);
+
+		assertThat(row.getGroupId()).isEqualTo(groupId);
+		assertThat(row.getGroupName()).isEqualTo("group");
+		assertThat(row.getGroupImage()).isEqualTo("avatar.png");
+		assertThat(row.getUserId()).isEqualTo(userId);
+		assertThat(row.getUsername()).isEqualTo("john");
+		assertThat(row.getUserImage()).isEqualTo("avatar.png");
+	}
+
+	@Test
+	void findGroupsWithUsers_WhenNoGroups_ReturnsEmptyList() {
+		String nonExistingUser = UUID.randomUUID().toString();
+
+		List<GroupUserRow> rows = groupRepository.findGroupsWithUsers(nonExistingUser);
+
+		assertThat(rows).isEmpty();
+	}
+
 }

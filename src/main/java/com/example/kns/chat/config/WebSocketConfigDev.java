@@ -14,12 +14,11 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
 
 import java.security.Principal;
-import java.util.List;
 import java.util.Map;
 
 @Configuration
 @EnableWebSocketMessageBroker
-@Profile({"local"})
+@Profile("local")
 @RequiredArgsConstructor
 public class WebSocketConfigDev implements WebSocketMessageBrokerConfigurer {
 
@@ -44,17 +43,19 @@ public class WebSocketConfigDev implements WebSocketMessageBrokerConfigurer {
 			}
 		};
 
-		// SockJS endpoint (kept)
-		registry.addEndpoint("/ws").addInterceptors(firebaseHandshakeInterceptor).setAllowedOrigins(frontendOrigin)
+		// FE SockJS endpoint
+		registry.addEndpoint("/ws").setAllowedOrigins(frontendOrigin).addInterceptors(firebaseHandshakeInterceptor)
 				.setHandshakeHandler(handler).withSockJS();
 
-		registry.addEndpoint("/ws-stomp").addInterceptors(firebaseHandshakeInterceptor)
-				.setAllowedOrigins(frontendOrigin).setHandshakeHandler(handler);
+		// Postman / raw WS testing endpoint
+		registry.addEndpoint("/ws-stomp").setAllowedOrigins(frontendOrigin)
+				.addInterceptors(firebaseHandshakeInterceptor).setHandshakeHandler(handler);
 	}
 
 	@Override
 	public void configureMessageBroker(MessageBrokerRegistry registry) {
-		registry.enableSimpleBroker("/topic");
+		registry.enableSimpleBroker("/topic", "/queue");
 		registry.setApplicationDestinationPrefixes("/app");
+		registry.setUserDestinationPrefix("/user");
 	}
 }

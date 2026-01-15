@@ -1,26 +1,24 @@
 package com.example.kns.chat.controller;
 
 import com.example.kns.chat.dto.ChatMessageDTO;
-import com.example.kns.chat.model.ChatMessage;
 import com.example.kns.chat.service.ChatMessageService;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
 @RequestMapping("/messages")
 @RequiredArgsConstructor
+@Validated
 public class ChatMessageControllerRest {
 
 	private final ChatMessageService service;
 
 	@GetMapping("/{groupId}")
-	public List<ChatMessageDTO> getMessages(@PathVariable String groupId) {
+	public List<ChatMessageDTO> getMessages(@PathVariable @NotBlank String groupId) {
 		return service.getAll(groupId).stream()
 				.map(msg -> ChatMessageDTO.builder().id(msg.getId()).senderId(msg.getSenderId())
 						.groupId(msg.getGroupId()).content(msg.getContent()).createdAt(msg.getCreatedAt())

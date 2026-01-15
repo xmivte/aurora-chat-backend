@@ -48,7 +48,7 @@ public class HelloControllerIntegrationTest {
 	FirebaseAuth firebaseAuth;
 
 	@BeforeEach
-	void setup() throws FirebaseAuthException {
+	void setUp() throws FirebaseAuthException {
 		long iat = Instant.now().getEpochSecond();
 		long exp = iat + 3600;
 
