@@ -3,6 +3,7 @@ package com.example.kns.services;
 import com.example.kns.dto.UserContext;
 import com.example.kns.dto.UserDataDto;
 import com.example.kns.repositories.UserAccountRepository;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import static org.flywaydb.core.internal.util.StringUtils.leftPad;
 
 @Service
 @AllArgsConstructor
+@SuppressFBWarnings("EI_EXPOSE_REP2")
 public class UserAccountService {
 	private static final int SALT_LENGTH = 4;
 	private static final int MAX_TRIES = 20;
@@ -36,6 +38,20 @@ public class UserAccountService {
 
 		userRepo.save(userContext, usersDataDto);
 		return usersDataDto;
+	}
+
+	public void deleteUser(UserContext userContext) {
+		userRepo.delete(userContext);
+	}
+
+	public UserDataDto updateUsersUsername(UserContext userContext, String newUsername) {
+		UserDataDto usersData = userRepo.findByUserId(userContext).get();
+
+		var uniqueUsername = createUniqueUsername(newUsername);
+		usersData.setUsername(uniqueUsername);
+		userRepo.updateUsername(userContext, uniqueUsername);
+
+		return usersData;
 	}
 
 	private String createUniqueUsername(String userEnteredUsername) {

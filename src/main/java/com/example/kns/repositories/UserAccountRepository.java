@@ -23,4 +23,10 @@ public interface UserAccountRepository {
 
 	@Select("SELECT COUNT(id) FROM db.users WHERE username = #{uniqueUsername}")
 	int countUsersByUsername(String uniqueUsername);
+
+	@Delete("DELETE FROM db.users WHERE email = #{userCtx.email}")
+	void delete(@Param("userCtx") UserContext userContext);
+
+	@Update("UPDATE db.users SET username = #{newUsername} WHERE email = #{userCtx.email}")
+	void updateUsername(@Param("userCtx") UserContext userContext, String newUsername);
 }
