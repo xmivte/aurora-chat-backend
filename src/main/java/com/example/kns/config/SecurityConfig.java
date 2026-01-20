@@ -39,6 +39,8 @@ public class SecurityConfig {
 	@Value("${app.frontend.origin}")
 	private String frontendOrigin;
 
+	private final FirebaseAuth firebaseAuth;
+
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
 		httpSecurity.cors(Customizer.withDefaults()).csrf(csrf -> csrf.disable())
@@ -71,7 +73,7 @@ public class SecurityConfig {
 	public JwtDecoder firebaseJwtDecoder() {
 		return token -> {
 			try {
-				FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
+				FirebaseToken decodedToken = firebaseAuth.verifyIdToken(token);
 				Map<String, Object> claims = new HashMap<>(decodedToken.getClaims());
 
 				Instant issuedAt = Instant.ofEpochSecond(((Number) claims.getOrDefault("iat", 0)).longValue());
