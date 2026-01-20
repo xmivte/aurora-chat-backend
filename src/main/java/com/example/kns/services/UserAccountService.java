@@ -16,9 +16,10 @@ import static org.flywaydb.core.internal.util.StringUtils.leftPad;
 @Service
 @AllArgsConstructor
 public class UserAccountService {
-	private final int SALT_LENGTH = 4;
-	private final int MAX_TRIES = 20;
+	private static final int SALT_LENGTH = 4;
+	private static final int MAX_TRIES = 20;
 	private final UserAccountRepository userRepo;
+	private final Random random = new Random();
 
 	public UserDataDto getUser(UserContext userContext) {
 		var usersData = userRepo.findByUserId(userContext);
@@ -39,21 +40,20 @@ public class UserAccountService {
 
 	private String createUniqueUsername(String userEnteredUsername) {
 		var stringBuilder = new StringBuilder(userEnteredUsername);
-		var random = new Random();
 
 		for (int i = 0; i < MAX_TRIES; i++) {
 			int randomInt = random.nextInt(Integer.MAX_VALUE);
 			String randomSalt = String.valueOf((int) (randomInt % Math.pow(10, SALT_LENGTH)));
 			randomSalt = leftPad(randomSalt, 4, '0');
 
-			stringBuilder.append('#' + randomSalt);
+			stringBuilder.append('#').append(randomSalt);
 			int usersWithSameUsername = userRepo.countUsersByUsername(stringBuilder.toString());
 
 			if (usersWithSameUsername == 0) {
 				return stringBuilder.toString();
 			}
 
-			stringBuilder.substring(0, stringBuilder.length() - 5);
+			stringBuilder.delete(stringBuilder.length() - 1 - SALT_LENGTH, stringBuilder.length());
 		}
 
 		return stringBuilder.toString();
