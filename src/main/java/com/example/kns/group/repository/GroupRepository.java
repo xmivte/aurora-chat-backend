@@ -12,6 +12,7 @@ public interface GroupRepository {
 
 	@Select("""
 			SELECT g.id, g.name, g.image
+
 			FROM db.groups g
 			JOIN db.user_groups ug
 			ON g.id = ug.group_id
