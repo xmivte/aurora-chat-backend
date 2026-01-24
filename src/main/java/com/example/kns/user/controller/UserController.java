@@ -25,6 +25,13 @@ public class UserController {
 				.toList();
 	}
 
+	@GetMapping("/server/{serverId}")
+	public List<UserDTO> getServerUsers(@PathVariable Long serverId) {
+		return service.getAllServer(serverId).stream().map(
+				user -> UserDTO.builder().id(user.getId()).username(user.getUsername()).image(user.getImage()).build())
+				.toList();
+	}
+
 	@GetMapping("/all")
 	public List<UserDTO> getAllUsers() {
 		return service.getAllUsers().stream().map(

@@ -1,7 +1,8 @@
 CREATE TABLE IF NOT EXISTS db.servers (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
-    user_id VARCHAR(100) NOT NULL REFERENCES db.users(id) ON DELETE CASCADE
+    user_id VARCHAR(100) NOT NULL REFERENCES db.users(id) ON DELETE CASCADE,
+    background_Color_Hex VARCHAR(15)
 );
 
 CREATE TABLE IF NOT EXISTS db.server_groups (
@@ -12,6 +13,6 @@ CREATE TABLE IF NOT EXISTS db.server_groups (
 
 CREATE TABLE IF NOT EXISTS db.server_group_users (
     id BIGSERIAL PRIMARY KEY,
-    server_groups_id INTEGER NOT NULL REFERENCES db.servers(id) ON DELETE CASCADE,
+    server_group_id INTEGER NOT NULL REFERENCES db.server_groups(id) ON DELETE CASCADE,
     user_id VARCHAR(100) NOT NULL REFERENCES db.users(id) ON DELETE CASCADE
 );

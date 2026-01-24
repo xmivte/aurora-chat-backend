@@ -1,13 +1,11 @@
-package com.example.kns.server.model;
+package com.example.kns.server_groups.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
-
-import java.time.OffsetDateTime;
 
 @Getter
 @Setter
@@ -15,8 +13,8 @@ import java.time.OffsetDateTime;
 @AllArgsConstructor
 @Builder
 @EqualsAndHashCode
-public class Group {
-	private String id;
-	private String name;
-	private String image;
+public class ServerGroup {
+	private Long id;
+	private Long serverId;
+	private String groupId;
 }
