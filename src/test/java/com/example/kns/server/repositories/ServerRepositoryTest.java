@@ -51,6 +51,7 @@ public class ServerRepositoryTest {
 	String serverName;
 	String serverColor;
 
+	Long serverIdDelete;
 	String userId2;
 
 	@Autowired
@@ -67,10 +68,11 @@ public class ServerRepositoryTest {
 		userId = UUID.randomUUID().toString();
 		serverId = -1L;
 		groupForServerId = UUID.randomUUID().toString();
-		serverGroupId = -1L;
+		serverGroupId = -333L;
 		serverName = "server";
 		serverColor = "#FF004A";
 
+		serverIdDelete = -50L;
 		userId2 = UUID.randomUUID().toString();
 
 		try (var conn = dataSource.getConnection()) {
@@ -98,6 +100,15 @@ public class ServerRepositoryTest {
 				serverStmt.setLong(1, serverId);
 				serverStmt.setString(2, serverName);
 				serverStmt.setString(3, userId);
+				serverStmt.setString(4, serverColor);
+				serverStmt.executeUpdate();
+			}
+
+			try (var serverStmt = conn.prepareStatement(
+					"INSERT INTO db.servers (id, name, user_id, background_Color_Hex) VALUES (?, ?, ?, ?)")) {
+				serverStmt.setLong(1, serverIdDelete);
+				serverStmt.setString(2, serverName);
+				serverStmt.setString(3, userId2);
 				serverStmt.setString(4, serverColor);
 				serverStmt.executeUpdate();
 			}
@@ -188,19 +199,16 @@ public class ServerRepositoryTest {
 
 	@Test
 	void deleteServer_WhenUserExists_ReturnsEmptyList() {
-		Server server = Server.builder().name(serverName).userId(userId2).build();
+		Server server = Server.builder().id(serverIdDelete).name(serverName).userId(userId2).build();
 
-		serverRepository.insert(server);
-
-		Long serverIdTemp = server.getId();
 		String groupId = UUID.randomUUID().toString();
-		ServerGroup serverGroup = ServerGroup.builder().serverId(serverIdTemp).groupId(groupId).build();
+		ServerGroup serverGroup = ServerGroup.builder().serverId(server.getId()).groupId(groupId).build();
 
 		groupRepository.insert(groupId, "main", null);
 		serverGroupsRepository.insert(serverGroup);
 		serverGroupUserRepository.insert(serverGroup.getId(), userId2);
 
-		serverRepository.deleteServer(serverIdTemp);
+		serverRepository.deleteServer(server.getId());
 
 		List<Server> servers = serverRepository.findAllServersByUserId(userId2);
 		assertThat(servers).hasSize(0);
@@ -231,7 +239,7 @@ public class ServerRepositoryTest {
 
 	@Test
 	void deleteSeverGroup_WhenServerHasGroup_ReturnsEmptyList() {
-		groupRepository.deleteServerGroups(serverGroupId);
+		groupRepository.deleteServerGroups(serverId);
 		List<ServerGroupUserRow> rows = groupRepository.findServerGroupsWithUsers(userId);
 		assertThat(rows).isEmpty();
 	}
