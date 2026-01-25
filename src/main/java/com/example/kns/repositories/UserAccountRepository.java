@@ -18,7 +18,7 @@ public interface UserAccountRepository {
 	@Select("SELECT username, image FROM db.users WHERE email = #{email}")
 	Optional<UserDataDto> findByUserId(UserContext userContext);
 
-	@Insert("INSERT INTO db.users(email, username, image) VALUES (#{userCtx.email}, #{userData.username}, #{userData.image})")
+	@Insert("INSERT INTO db.users(id, email, username, image) VALUES (#{userCtx.email}, #{userCtx.email}, #{userData.username}, #{userData.image})")
 	void save(@Param("userCtx") UserContext userContext, @Param("userData") UserDataDto usersDataDto);
 
 	@Select("SELECT COUNT(id) FROM db.users WHERE username = #{uniqueUsername}")
