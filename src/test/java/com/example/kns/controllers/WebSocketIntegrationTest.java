@@ -4,6 +4,7 @@ import com.example.kns.chat.dto.ChatMessageDTO;
 import com.example.kns.chat.model.ChatMessage;
 import com.example.kns.chat.service.ChatMessagePoller;
 import com.example.kns.config.TestEmbeddedPostgresConfig;
+import com.example.kns.config.TestSecurityConfig;
 import com.example.kns.group.repository.GroupRepository;
 import com.example.kns.user.repository.UserRepository;
 import com.example.kns.user_groups.repository.UserGroupRepository;
@@ -24,6 +25,7 @@ import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.socket.WebSocketHttpHeaders;
@@ -47,9 +49,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Import(TestEmbeddedPostgresConfig.class)
+@Import({TestEmbeddedPostgresConfig.class, TestSecurityConfig.class})
 @ActiveProfiles("test")
 @TestPropertySource("classpath:application-test.yml")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class WebSocketIntegrationTest {
 
@@ -77,7 +80,7 @@ class WebSocketIntegrationTest {
 	void seedDb() {
 		userRepository.insert("userId5", "test-user", "userId5@test.com", null);
 		groupRepository.insert("room1", "room1", null);
-		userGroupRepository.insert("userId5", "room1");
+		userGroupRepository.insertMany(List.of("userId5"), "room1");
 	}
 
 	@BeforeEach

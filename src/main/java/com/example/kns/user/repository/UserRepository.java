@@ -20,6 +20,12 @@ public interface UserRepository {
 			""")
 	List<User> findAllUsersByGroupId(@Param("groupId") String groupId);
 
+	@Select("""
+			SELECT id, username, email, image
+			FROM db.users
+			""")
+	List<User> findAllUsers();
+
 	@Insert("""
 			INSERT INTO db.users(id, username, email, image)
 			VALUES (#{id}, #{username}, #{email}, #{image})

@@ -4,6 +4,9 @@ spring:
     schemas: db
     default-schema: db
     locations: classpath:db/migrations
+  task:
+    scheduling:
+      enabled: false
 
 mybatis:
   configuration:
