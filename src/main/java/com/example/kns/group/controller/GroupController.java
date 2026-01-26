@@ -3,10 +3,8 @@ package com.example.kns.group.controller;
 import com.example.kns.group.dto.CreateGroupRequest;
 import com.example.kns.group.dto.GroupDTO;
 import com.example.kns.group.dto.GroupWithUsersDTO;
-import com.example.kns.group.model.Group;
 import com.example.kns.group.service.GroupService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.List;
@@ -30,6 +28,11 @@ public class GroupController {
 	@PostMapping
 	public GroupDTO createGroup(@RequestBody CreateGroupRequest request) {
 		return service.createGroup(request.getMyUserId(), request.getOtherUserId());
+	}
+
+	@GetMapping("/{groupId}/participants")
+	public List<String> getParticipants(@PathVariable String groupId) {
+		return service.getParticipantIds(groupId);
 	}
 
 }
