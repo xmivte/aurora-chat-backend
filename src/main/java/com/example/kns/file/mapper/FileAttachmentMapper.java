@@ -2,18 +2,16 @@ package com.example.kns.file.mapper;
 
 import com.example.kns.file.dto.FileAttachmentDTO;
 import com.example.kns.file.model.FileAttachment;
+import lombok.experimental.UtilityClass;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public final class FileAttachmentMapper {
+@UtilityClass
+public class FileAttachmentMapper {
 
-	private FileAttachmentMapper() {
-		throw new UnsupportedOperationException("Utility class cannot be instantiated");
-	}
-
-	public static FileAttachmentDTO toDTO(FileAttachment attachment) {
+	public FileAttachmentDTO toDTO(FileAttachment attachment) {
 		if (attachment == null) {
 			return null;
 		}
@@ -24,7 +22,7 @@ public final class FileAttachmentMapper {
 				.expiresAt(attachment.getExpiresAt()).build();
 	}
 
-	public static List<FileAttachmentDTO> toDTOList(List<FileAttachment> attachments) {
+	public List<FileAttachmentDTO> toDTOList(List<FileAttachment> attachments) {
 		if (attachments == null || attachments.isEmpty()) {
 			return null;
 		}
@@ -32,7 +30,7 @@ public final class FileAttachmentMapper {
 		return attachments.stream().map(FileAttachmentMapper::toDTO).collect(Collectors.toList());
 	}
 
-	public static List<FileAttachmentDTO> toDTOListOrEmpty(List<FileAttachment> attachments) {
+	public List<FileAttachmentDTO> toDTOListOrEmpty(List<FileAttachment> attachments) {
 		if (attachments == null || attachments.isEmpty()) {
 			return Collections.emptyList();
 		}

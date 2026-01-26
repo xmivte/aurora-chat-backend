@@ -4,17 +4,11 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.example.kns.file.config.FileStorageProperties;
 import com.example.kns.file.dto.FileMetadataDTO;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.apache.tika.Tika;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -29,26 +23,9 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class FileStorageService {
 
-	@Value("${cloudinary.credentials}")
-	private String credentialsPath;
-
-	private final ResourceLoader resourceLoader;
+	private final Cloudinary cloudinary;
 	private final FileStorageProperties config;
-
-	private Cloudinary cloudinary;
 	private final Tika tika = new Tika();
-
-	@PostConstruct
-	public void init() throws IOException {
-		ObjectMapper mapper = new ObjectMapper();
-		Resource resource = resourceLoader.getResource(credentialsPath);
-		Map<String, String> credentials = mapper.readValue(resource.getInputStream(),
-				new TypeReference<Map<String, String>>() {
-				});
-
-		cloudinary = new Cloudinary(ObjectUtils.asMap("cloud_name", credentials.get("cloud_name"), "api_key",
-				credentials.get("api_key"), "api_secret", credentials.get("api_secret"), "secure", true));
-	}
 
 	public FileMetadataDTO uploadFile(MultipartFile file) throws IOException {
 		if (file.isEmpty()) {

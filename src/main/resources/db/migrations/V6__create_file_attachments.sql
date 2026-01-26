@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS db.file_attachments (
     id BIGSERIAL PRIMARY KEY,
-    message_id BIGINT NOT NULL REFERENCES db.chat_messages(id) ON DELETE CASCADE,
+    message_id BIGINT NOT NULL REFERENCES db.chat_messages(id),
     file_name VARCHAR(255) NOT NULL,
     original_file_name VARCHAR(255) NOT NULL,
     file_url TEXT NOT NULL,
