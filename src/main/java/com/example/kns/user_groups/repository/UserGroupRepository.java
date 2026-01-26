@@ -1,5 +1,6 @@
 package com.example.kns.user_groups.repository;
 
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -26,4 +27,7 @@ public interface UserGroupRepository {
 			WHERE group_id = #{groupId}
 			""")
 	List<String> findUserIdsByGroupId(@Param("groupId") String groupId);
+
+	@Delete("DELETE FROM db.user_groups WHERE user_id = #{userId}")
+	void deleteByUserId(@Param("userId") String userId);
 }

@@ -3,6 +3,7 @@ package com.example.kns.services;
 import com.example.kns.dto.UserContext;
 import com.example.kns.dto.UserDataDto;
 import com.example.kns.repositories.UserAccountRepository;
+import com.example.kns.user_groups.repository.UserGroupRepository;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,7 @@ public class UserAccountService {
 	private static final int SALT_LENGTH = 4;
 	private static final int MAX_TRIES = 20;
 	private final UserAccountRepository userRepo;
+	private final UserGroupRepository userGroupRepo;
 	private final Random random = new Random();
 
 	public UserDataDto getUser(UserContext userContext) {
@@ -41,6 +43,7 @@ public class UserAccountService {
 	}
 
 	public void deleteUser(UserContext userContext) {
+		userGroupRepo.deleteByUserId(userContext.getEmail());
 		userRepo.delete(userContext);
 	}
 
