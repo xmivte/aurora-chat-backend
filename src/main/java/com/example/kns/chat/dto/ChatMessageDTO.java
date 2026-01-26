@@ -1,5 +1,6 @@
 package com.example.kns.chat.dto;
 
+import com.example.kns.file.dto.FileAttachmentDTO;
 import com.example.kns.file.dto.FileMetadataDTO;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.AssertTrue;
@@ -32,22 +33,28 @@ public class ChatMessageDTO {
 	@Size(max = 2000, message = "Message is too long (max 2000 chars)")
 	private String content;
 
-    @Valid
-    private List<FileMetadataDTO> fileMetadata;
-    private OffsetDateTime createdAt;
-    private String username;
+	@Valid
+	private List<FileMetadataDTO> fileMetadata;
 
-    @AssertTrue(message = "Message must have content or file attachments")
-    private boolean isValidMessage() {
-        return (content != null && !content.isBlank()) || (fileMetadata != null && !fileMetadata.isEmpty());
-    }
+	private List<FileAttachmentDTO> fileAttachments;
 
-    @AssertTrue(message = "Total file size cannot exceed 10 MB")
-    private boolean isValidTotalFileSize() {
-        if (fileMetadata == null || fileMetadata.isEmpty()) {
-            return true;
-        }
-        long totalSize = fileMetadata.stream().mapToLong(FileMetadataDTO::getFileSize).sum();
-        return totalSize <= 10 * 1024 * 1024;
-    }
+	private OffsetDateTime createdAt;
+	private String username;
+
+	@AssertTrue(message = "Message must have content or file attachments")
+	private boolean isValidMessage() {
+		boolean hasContent = content != null && !content.isBlank();
+		boolean hasFileMetadata = fileMetadata != null && !fileMetadata.isEmpty();
+		boolean hasFileAttachments = fileAttachments != null && !fileAttachments.isEmpty();
+		return hasContent || hasFileMetadata || hasFileAttachments;
+	}
+
+	@AssertTrue(message = "Total file size cannot exceed 10 MB")
+	private boolean isValidTotalFileSize() {
+		if (fileMetadata == null || fileMetadata.isEmpty()) {
+			return true;
+		}
+		long totalSize = fileMetadata.stream().mapToLong(FileMetadataDTO::getFileSize).sum();
+		return totalSize <= 10 * 1024 * 1024;
+	}
 }

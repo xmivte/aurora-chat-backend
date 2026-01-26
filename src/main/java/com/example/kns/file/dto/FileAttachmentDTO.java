@@ -1,6 +1,9 @@
-package com.example.kns.file.model;
+package com.example.kns.file.dto;
+
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.OffsetDateTime;
@@ -8,12 +11,13 @@ import java.time.OffsetDateTime;
 @Getter
 @Setter
 @Builder
-public class FileAttachment {
+@AllArgsConstructor
+@NoArgsConstructor
+public class FileAttachmentDTO {
+
 	private Long id;
-	private Long messageId;
 	private String fileName;
 	private String originalFileName;
-	private String fileUrl;
 	private String fileType;
 	private Long fileSize;
 	private OffsetDateTime uploadedAt;

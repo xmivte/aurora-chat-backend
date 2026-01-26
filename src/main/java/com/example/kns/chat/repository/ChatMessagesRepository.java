@@ -1,6 +1,7 @@
 package com.example.kns.chat.repository;
 
 import com.example.kns.chat.model.ChatMessage;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Options;
@@ -45,12 +46,15 @@ public interface ChatMessagesRepository {
 			""")
 	List<ChatMessage> findAllMessagesByGroupId(@Param("groupId") String groupId);
 
-    @Select("""
-        SELECT m.id, m.sender_id AS senderId, m.group_id AS groupId, m.content, 
-               m.created_at AS createdAt, m.sent, u.username
-        FROM db.chat_messages m
-        JOIN db.users u ON u.id = m.sender_id
-        WHERE m.id = #{messageId}
-        """)
-    ChatMessage findById(@Param("messageId") Long messageId);
+	@Select("""
+			SELECT m.id, m.sender_id AS senderId, m.group_id AS groupId, m.content,
+			       m.created_at AS createdAt, m.sent, u.username
+			FROM db.chat_messages m
+			JOIN db.users u ON u.id = m.sender_id
+			WHERE m.id = #{messageId}
+			""")
+	ChatMessage findById(@Param("messageId") Long messageId);
+
+	@Delete("DELETE FROM db.chat_messages WHERE id = #{messageId}")
+	void deleteById(@Param("messageId") Long messageId);
 }

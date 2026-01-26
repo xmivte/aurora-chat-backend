@@ -17,22 +17,24 @@ import java.time.OffsetDateTime;
 @NoArgsConstructor
 public class FileMetadataDTO {
 
-    @NotBlank(message = "File URL is required")
-    private String fileUrl;
+	private Long id;
 
-    @NotBlank(message = "File name is required")
-    private String fileName;
+	@NotBlank(message = "File URL is required")
+	private String fileUrl;
 
-    @NotBlank(message = "Original file name is required")
-    private String originalFileName;
+	@NotBlank(message = "File name is required")
+	private String fileName;
 
-    @NotBlank(message = "File type is required")
-    private String fileType;
+	@NotBlank(message = "Original file name is required")
+	private String originalFileName;
 
-    @NotNull(message = "File size is required")
-    private Long fileSize;
+	@NotBlank(message = "File type is required")
+	private String fileType;
 
-    // Time data when fetching file
-    private OffsetDateTime uploadedAt;
-    private OffsetDateTime expiresAt;
+	@NotNull(message = "File size is required")
+	private Long fileSize;
+
+	// Time data when fetching file
+	private OffsetDateTime uploadedAt;
+	private OffsetDateTime expiresAt;
 }
