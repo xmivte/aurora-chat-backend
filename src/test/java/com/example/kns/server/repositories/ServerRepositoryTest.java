@@ -53,6 +53,7 @@ public class ServerRepositoryTest {
 
 	Long serverIdDelete;
 	String userId2;
+	String userId3;
 
 	@Autowired
 	private ServerRepository serverRepository;
@@ -66,16 +67,31 @@ public class ServerRepositoryTest {
 	@BeforeAll
 	void setUp() throws Exception {
 		userId = UUID.randomUUID().toString();
-		serverId = -1L;
+		serverId = 1L;
 		groupForServerId = UUID.randomUUID().toString();
-		serverGroupId = -333L;
+		serverGroupId = 333L;
 		serverName = "server";
 		serverColor = "#FF004A";
 
-		serverIdDelete = -50L;
+		serverIdDelete = 50L;
 		userId2 = UUID.randomUUID().toString();
+		userId3 = UUID.randomUUID().toString();
 
 		try (var conn = dataSource.getConnection()) {
+			try (var cleanup = conn.prepareStatement("""
+					    TRUNCATE TABLE
+					        db.server_group_users,
+					        db.server_groups,
+					        db.servers
+					    RESTART IDENTITY CASCADE
+					""")) {
+				cleanup.execute();
+			}
+
+			try (var stmt = conn.prepareStatement(
+					"SELECT setval('db.server_groups_id_seq', (SELECT MAX(id) FROM db.server_groups))")) {
+				stmt.execute();
+			}
 
 			try (var userStmt = conn
 					.prepareStatement("INSERT INTO db.users (id, username, email, image) VALUES (?, ?, ?, ?)")) {
@@ -95,6 +111,15 @@ public class ServerRepositoryTest {
 				userStmt.executeUpdate();
 			}
 
+			try (var userStmt = conn
+					.prepareStatement("INSERT INTO db.users (id, username, email, image) VALUES (?, ?, ?, ?)")) {
+				userStmt.setString(1, userId3);
+				userStmt.setString(2, "john");
+				userStmt.setString(3, "user3@example.com");
+				userStmt.setString(4, "avatar.png");
+				userStmt.executeUpdate();
+			}
+
 			try (var serverStmt = conn.prepareStatement(
 					"INSERT INTO db.servers (id, name, user_id, background_Color_Hex) VALUES (?, ?, ?, ?)")) {
 				serverStmt.setLong(1, serverId);
@@ -108,7 +133,7 @@ public class ServerRepositoryTest {
 					"INSERT INTO db.servers (id, name, user_id, background_Color_Hex) VALUES (?, ?, ?, ?)")) {
 				serverStmt.setLong(1, serverIdDelete);
 				serverStmt.setString(2, serverName);
-				serverStmt.setString(3, userId2);
+				serverStmt.setString(3, userId3);
 				serverStmt.setString(4, serverColor);
 				serverStmt.executeUpdate();
 			}
@@ -199,18 +224,9 @@ public class ServerRepositoryTest {
 
 	@Test
 	void deleteServer_WhenUserExists_ReturnsEmptyList() {
-		Server server = Server.builder().id(serverIdDelete).name(serverName).userId(userId2).build();
+		serverRepository.deleteServer(serverIdDelete);
 
-		String groupId = UUID.randomUUID().toString();
-		ServerGroup serverGroup = ServerGroup.builder().serverId(server.getId()).groupId(groupId).build();
-
-		groupRepository.insert(groupId, "main", null);
-		serverGroupsRepository.insert(serverGroup);
-		serverGroupUserRepository.insert(serverGroup.getId(), userId2);
-
-		serverRepository.deleteServer(server.getId());
-
-		List<Server> servers = serverRepository.findAllServersByUserId(userId2);
+		List<Server> servers = serverRepository.findAllServersByUserId(userId3);
 		assertThat(servers).hasSize(0);
 
 		assertThat(servers).isEmpty();

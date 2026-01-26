@@ -61,11 +61,20 @@ public class ServerGroupsRepositoryTest {
 	@BeforeAll
 	void setUp() throws Exception {
 		userId = UUID.randomUUID().toString();
-		serverId = -99L;
+		serverId = 99L;
 		groupForServerId = UUID.randomUUID().toString();
 		serverName = "server";
 
 		try (var conn = dataSource.getConnection()) {
+			try (var cleanup = conn.prepareStatement("""
+					    TRUNCATE TABLE
+					        db.server_group_users,
+					        db.server_groups,
+					        db.servers
+					    RESTART IDENTITY CASCADE
+					""")) {
+				cleanup.execute();
+			}
 
 			try (var userStmt = conn
 					.prepareStatement("INSERT INTO db.users (id, username, email, image) VALUES (?, ?, ?, ?)")) {
