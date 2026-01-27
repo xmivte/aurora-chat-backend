@@ -33,11 +33,11 @@ public class ServerService {
 	}
 
 	@Transactional
-	public ServerDTO insertServer(@NotBlank String userId, String name) {
+	public ServerDTO insertServer(@NotBlank String userEmail, String name) {
 		int color = ThreadLocalRandom.current().nextInt(0x1000000);
 		String colorHex = String.format("#%06X", color);
 
-		Server server = Server.builder().name(name).userId(userId).backgroundColorHex(colorHex).build();
+		Server server = Server.builder().name(name).userEmail(userEmail).backgroundColorHex(colorHex).build();
 
 		serverRepository.insert(server);
 
@@ -47,13 +47,15 @@ public class ServerService {
 
 		groupRepository.insert(groupId, "main", null);
 		serverGroupsRepository.insert(serverGroup);
-		serverGroupUserRepository.insert(serverGroup.getId(), userId);
+		serverGroupUserRepository.insert(serverGroup.getId(), userEmail);
 
-		return ServerDTO.builder().id(serverId).name(name).userId(userId).backgroundColorHex(colorHex).build();
+		return ServerDTO.builder().id(serverId).name(name).userEmail(userEmail).backgroundColorHex(colorHex).build();
 	}
 
-	public void deleteServer(@NotBlank Long serverId) {
-		groupRepository.deleteServerGroups(serverId);
-		serverRepository.deleteServer(serverId);
+	public void deleteServer(@NotBlank Long serverId, @NotBlank String userId) {
+		serverGroupUserRepository.deleteServerGroupUsers(serverId, userId);
+		serverGroupsRepository.deleteServerGroups(serverId, userId);
+		groupRepository.deleteServerGroups(serverId, userId);
+		serverRepository.deleteServer(serverId, userId);
 	}
 }

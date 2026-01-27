@@ -44,7 +44,6 @@ public class ServerRepositoryTest {
 	@Autowired
 	DataSource dataSource;
 
-	String userId;
 	Long serverId;
 	String groupForServerId;
 	Long serverGroupId;
@@ -52,6 +51,10 @@ public class ServerRepositoryTest {
 	String serverColor;
 
 	Long serverIdDelete;
+	String userEmail1;
+	String userEmail2;
+	String userEmail3;
+	String userId1;
 	String userId2;
 	String userId3;
 
@@ -66,7 +69,7 @@ public class ServerRepositoryTest {
 
 	@BeforeAll
 	void setUp() throws Exception {
-		userId = UUID.randomUUID().toString();
+		userEmail1 = UUID.randomUUID().toString();
 		serverId = 1L;
 		groupForServerId = UUID.randomUUID().toString();
 		serverGroupId = 333L;
@@ -74,6 +77,12 @@ public class ServerRepositoryTest {
 		serverColor = "#FF004A";
 
 		serverIdDelete = 50L;
+
+		userEmail1 = UUID.randomUUID().toString();
+		userEmail2 = UUID.randomUUID().toString();
+		userEmail3 = UUID.randomUUID().toString();
+
+		userId1 = UUID.randomUUID().toString();
 		userId2 = UUID.randomUUID().toString();
 		userId3 = UUID.randomUUID().toString();
 
@@ -95,9 +104,9 @@ public class ServerRepositoryTest {
 
 			try (var userStmt = conn
 					.prepareStatement("INSERT INTO db.users (id, username, email, image) VALUES (?, ?, ?, ?)")) {
-				userStmt.setString(1, userId);
+				userStmt.setString(1, userId1);
 				userStmt.setString(2, "john");
-				userStmt.setString(3, "jjohny@example.com");
+				userStmt.setString(3, userEmail1);
 				userStmt.setString(4, "avatar.png");
 				userStmt.executeUpdate();
 			}
@@ -106,7 +115,7 @@ public class ServerRepositoryTest {
 					.prepareStatement("INSERT INTO db.users (id, username, email, image) VALUES (?, ?, ?, ?)")) {
 				userStmt.setString(1, userId2);
 				userStmt.setString(2, "john");
-				userStmt.setString(3, "johnyy@example.com");
+				userStmt.setString(3, userEmail2);
 				userStmt.setString(4, "avatar.png");
 				userStmt.executeUpdate();
 			}
@@ -115,25 +124,25 @@ public class ServerRepositoryTest {
 					.prepareStatement("INSERT INTO db.users (id, username, email, image) VALUES (?, ?, ?, ?)")) {
 				userStmt.setString(1, userId3);
 				userStmt.setString(2, "john");
-				userStmt.setString(3, "user3@example.com");
+				userStmt.setString(3, userEmail3);
 				userStmt.setString(4, "avatar.png");
 				userStmt.executeUpdate();
 			}
 
 			try (var serverStmt = conn.prepareStatement(
-					"INSERT INTO db.servers (id, name, user_id, background_Color_Hex) VALUES (?, ?, ?, ?)")) {
+					"INSERT INTO db.servers (id, name, user_email, background_Color_Hex) VALUES (?, ?, ?, ?)")) {
 				serverStmt.setLong(1, serverId);
 				serverStmt.setString(2, serverName);
-				serverStmt.setString(3, userId);
+				serverStmt.setString(3, userEmail1);
 				serverStmt.setString(4, serverColor);
 				serverStmt.executeUpdate();
 			}
 
 			try (var serverStmt = conn.prepareStatement(
-					"INSERT INTO db.servers (id, name, user_id, background_Color_Hex) VALUES (?, ?, ?, ?)")) {
+					"INSERT INTO db.servers (id, name, user_email, background_Color_Hex) VALUES (?, ?, ?, ?)")) {
 				serverStmt.setLong(1, serverIdDelete);
 				serverStmt.setString(2, serverName);
-				serverStmt.setString(3, userId3);
+				serverStmt.setString(3, userEmail3);
 				serverStmt.setString(4, serverColor);
 				serverStmt.executeUpdate();
 			}
@@ -154,10 +163,10 @@ public class ServerRepositoryTest {
 			}
 
 			try (var serverStmt = conn.prepareStatement(
-					"INSERT INTO db.server_group_users (id, server_group_id, user_id) VALUES (?, ?, ?)")) {
+					"INSERT INTO db.server_group_users (id, server_group_id, user_email) VALUES (?, ?, ?)")) {
 				serverStmt.setLong(1, -1L);
 				serverStmt.setLong(2, serverGroupId);
-				serverStmt.setString(3, userId);
+				serverStmt.setString(3, userEmail1);
 				serverStmt.executeUpdate();
 			}
 
@@ -166,9 +175,9 @@ public class ServerRepositoryTest {
 
 	@Test
 	void findAllServersByUserId_WhenUserHasServers_ReturnsServers() {
-		List<Server> servers = serverRepository.findAllServersByUserId(userId);
+		List<Server> servers = serverRepository.findAllServersByUserId(userEmail1);
 
-		Server expected = new Server(serverId, serverName, userId, serverColor);
+		Server expected = new Server(serverId, serverName, userEmail1, serverColor);
 
 		assertThat(servers).hasSize(1);
 		assertThat(servers.get(0)).isEqualTo(expected);
@@ -185,7 +194,7 @@ public class ServerRepositoryTest {
 
 	@Test
 	void insertServer_WhenUserExists_ReturnsInsertedServer() {
-		Server server = Server.builder().name(serverName).userId(userId2).build();
+		Server server = Server.builder().name(serverName).userEmail(userEmail2).build();
 
 		serverRepository.insert(server);
 
@@ -195,9 +204,9 @@ public class ServerRepositoryTest {
 
 		groupRepository.insert(groupId, "main", null);
 		serverGroupsRepository.insert(serverGroup);
-		serverGroupUserRepository.insert(serverGroup.getId(), userId2);
+		serverGroupUserRepository.insert(serverGroup.getId(), userEmail2);
 
-		List<Server> servers = serverRepository.findAllServersByUserId(userId2);
+		List<Server> servers = serverRepository.findAllServersByUserId(userEmail2);
 		assertThat(servers).hasSize(1);
 		server.setId(serverIdTemp);
 		server.setBackgroundColorHex(servers.get(0).getBackgroundColorHex());
@@ -207,8 +216,8 @@ public class ServerRepositoryTest {
 
 	@Test
 	void insertServer_WhenNoUser_ThrowsException() {
-		String nonExistingUserId = UUID.randomUUID().toString();
-		Server server = Server.builder().name("test-server").userId(nonExistingUserId).build();
+		String nonExistingUserEmail = UUID.randomUUID().toString();
+		Server server = Server.builder().name("test-server").userEmail(nonExistingUserEmail).build();
 
 		assertThatThrownBy(() -> serverRepository.insert(server)).isInstanceOf(RuntimeException.class);
 	}
@@ -224,9 +233,9 @@ public class ServerRepositoryTest {
 
 	@Test
 	void deleteServer_WhenUserExists_ReturnsEmptyList() {
-		serverRepository.deleteServer(serverIdDelete);
+		serverRepository.deleteServer(serverIdDelete, userEmail3);
 
-		List<Server> servers = serverRepository.findAllServersByUserId(userId3);
+		List<Server> servers = serverRepository.findAllServersByUserId(userEmail3);
 		assertThat(servers).hasSize(0);
 
 		assertThat(servers).isEmpty();
@@ -234,12 +243,13 @@ public class ServerRepositoryTest {
 
 	@Test
 	void findServerGroupsWithUsers_WhenUserHasServerAndServerHasGroup_ReturnsFlattenedRows() {
-		List<ServerGroupUserRow> rows = groupRepository.findServerGroupsWithUsers(userId);
+		List<ServerGroupUserRow> rows = groupRepository.findServerGroupsWithUsers(userEmail1);
 
 		assertThat(rows).hasSize(1);
 		ServerGroupUserRow row = rows.get(0);
 		ServerGroupUserRow rowCopy = ServerGroupUserRow.builder().groupId(groupForServerId).groupName("main")
-				.groupImage("").serverId(serverId).userId(userId).username("john").userImage("avatar.png").build();
+				.groupImage("").serverId(serverId).userId(userId1).userEmail(userEmail1).username("john")
+				.userImage("avatar.png").build();
 
 		assertThat(row).isEqualTo(rowCopy);
 	}
@@ -255,8 +265,10 @@ public class ServerRepositoryTest {
 
 	@Test
 	void deleteSeverGroup_WhenServerHasGroup_ReturnsEmptyList() {
-		groupRepository.deleteServerGroups(serverId);
-		List<ServerGroupUserRow> rows = groupRepository.findServerGroupsWithUsers(userId);
+		serverGroupUserRepository.deleteServerGroupUsers(serverId, userEmail1);
+		serverGroupsRepository.deleteServerGroups(serverId, userEmail1);
+		groupRepository.deleteServerGroups(serverId, userEmail1);
+		List<ServerGroupUserRow> rows = groupRepository.findServerGroupsWithUsers(userEmail1);
 		assertThat(rows).isEmpty();
 	}
 }

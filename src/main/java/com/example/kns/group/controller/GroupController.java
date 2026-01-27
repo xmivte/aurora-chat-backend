@@ -1,5 +1,6 @@
 package com.example.kns.group.controller;
 
+import com.example.kns.dto.UserContext;
 import com.example.kns.group.dto.CreateGroupRequest;
 import com.example.kns.group.dto.GroupDTO;
 import com.example.kns.group.dto.GroupWithUsersDTO;
@@ -7,6 +8,7 @@ import com.example.kns.group.dto.ServerGroupWithUsersDTO;
 import com.example.kns.group.model.Group;
 import com.example.kns.group.service.GroupService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,8 +31,8 @@ public class GroupController {
 	}
 
 	@GetMapping("/server/{userId}")
-	public List<ServerGroupWithUsersDTO> getServerGroups(@PathVariable String userId) {
-		return service.getAllServerGroupsWithUsers(userId);
+	public List<ServerGroupWithUsersDTO> getServerGroups(@AuthenticationPrincipal UserContext userContext) {
+		return service.getAllServerGroupsWithUsers(userContext.getEmail());
 	}
 
 	@PostMapping

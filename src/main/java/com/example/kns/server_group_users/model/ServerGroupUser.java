@@ -16,5 +16,5 @@ import lombok.EqualsAndHashCode;
 public class ServerGroupUser {
 	private Long id;
 	private Long serverGroupId;
-	private String userId;
+	private String userEmail;
 }

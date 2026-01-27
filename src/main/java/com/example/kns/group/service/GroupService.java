@@ -45,8 +45,8 @@ public class GroupService {
 		}).toList();
 	}
 
-	public List<ServerGroupWithUsersDTO> getAllServerGroupsWithUsers(@NotBlank String userId) {
-		List<ServerGroupUserRow> rows = mapper.findServerGroupsWithUsers(userId);
+	public List<ServerGroupWithUsersDTO> getAllServerGroupsWithUsers(@NotBlank String userEmail) {
+		List<ServerGroupUserRow> rows = mapper.findServerGroupsWithUsers(userEmail);
 
 		return rows.stream().collect(Collectors.groupingBy(ServerGroupUserRow::getGroupId)).entrySet().stream()
 				.map(entry -> {

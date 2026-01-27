@@ -45,6 +45,7 @@ public class ServerGroupsRepositoryTest {
 	Long serverId;
 	String groupForServerId;
 	String serverName;
+	String userEmail;
 
 	@Autowired
 	GroupRepository groupRepository;
@@ -61,6 +62,7 @@ public class ServerGroupsRepositoryTest {
 	@BeforeAll
 	void setUp() throws Exception {
 		userId = UUID.randomUUID().toString();
+		userEmail = UUID.randomUUID().toString();
 		serverId = 99L;
 		groupForServerId = UUID.randomUUID().toString();
 		serverName = "server";
@@ -80,16 +82,16 @@ public class ServerGroupsRepositoryTest {
 					.prepareStatement("INSERT INTO db.users (id, username, email, image) VALUES (?, ?, ?, ?)")) {
 				userStmt.setString(1, userId);
 				userStmt.setString(2, "john");
-				userStmt.setString(3, "kjohny@example.com");
+				userStmt.setString(3, userEmail);
 				userStmt.setString(4, "avatar.png");
 				userStmt.executeUpdate();
 			}
 
 			try (var serverStmt = conn
-					.prepareStatement("INSERT INTO db.servers (id, name, user_id) VALUES (?, ?, ?)")) {
+					.prepareStatement("INSERT INTO db.servers (id, name, user_email) VALUES (?, ?, ?)")) {
 				serverStmt.setLong(1, serverId);
 				serverStmt.setString(2, serverName);
-				serverStmt.setString(3, userId);
+				serverStmt.setString(3, userEmail);
 				serverStmt.executeUpdate();
 			}
 

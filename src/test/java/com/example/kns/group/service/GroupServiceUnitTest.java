@@ -78,9 +78,9 @@ public class GroupServiceUnitTest {
 		Long serverId = 1L;
 
 		List<ServerGroupUserRow> rows = List.of(
-				new ServerGroupUserRow("g1", "Group 1", "img1", serverId, "u1", "Alice", "a.png"),
-				new ServerGroupUserRow("g1", "Group 1", "img1", serverId, "u2", "Bob", "p.png"),
-				new ServerGroupUserRow("g2", "Group 2", "img2", serverId, "u3", "Charlie", "c.png"));
+				new ServerGroupUserRow("g1", "Group 1", "img1", serverId, "u1", "Alice", "Alice", "a.png"),
+				new ServerGroupUserRow("g1", "Group 1", "img1", serverId, "u2", "Bob", "Bob", "p.png"),
+				new ServerGroupUserRow("g2", "Group 2", "img2", serverId, "u3", "Charlie", "Charlie", "c.png"));
 
 		when(mapper.findServerGroupsWithUsers(userId)).thenReturn(rows);
 

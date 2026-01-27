@@ -48,7 +48,7 @@ public class ServerServiceTest {
 
 	@Test
 	void insertServer_InsertsServerAndServerGroups() {
-		String userId = "user-123";
+		String userEmail = "user-123";
 		String serverName = "My Server";
 
 		doAnswer(invocation -> {
@@ -63,17 +63,17 @@ public class ServerServiceTest {
 			return null;
 		}).when(serverGroupsRepository).insert(any(ServerGroup.class));
 
-		ServerDTO result = serverService.insertServer(userId, serverName);
+		ServerDTO result = serverService.insertServer(userEmail, serverName);
 
 		assertNotNull(result);
 		assertEquals(1L, result.getId());
 		assertEquals(serverName, result.getName());
-		assertEquals(userId, result.getUserId());
+		assertEquals(userEmail, result.getUserEmail());
 
 		verify(serverRepository).insert(any(Server.class));
 		verify(groupRepository).insert(anyString(), eq("main"), isNull());
 		verify(serverGroupsRepository).insert(any(ServerGroup.class));
-		verify(serverGroupUserRepository).insert(anyLong(), eq(userId));
+		verify(serverGroupUserRepository).insert(anyLong(), eq(userEmail));
 	}
 
 	@Test
@@ -93,7 +93,7 @@ public class ServerServiceTest {
 
 	@Test
 	void deleteServer_DeleteServerAndServerGroups() {
-		String userId = "user-123";
+		String userEmail = "user-123";
 		String serverName = "My Server";
 		Long serverIdForDelete = 1L;
 
@@ -109,15 +109,15 @@ public class ServerServiceTest {
 			return null;
 		}).when(serverGroupsRepository).insert(any(ServerGroup.class));
 
-		serverService.insertServer(userId, serverName);
+		serverService.insertServer(userEmail, serverName);
 
-		serverService.deleteServer(serverIdForDelete);
+		serverService.deleteServer(serverIdForDelete, userEmail);
 
-		List<Server> rows = serverRepository.findAllServersByUserId(userId);
+		List<Server> rows = serverRepository.findAllServersByUserId(userEmail);
 
 		assertEquals(rows.size(), 0);
 
-		verify(groupRepository).deleteServerGroups(serverIdForDelete);
-		verify(serverRepository).deleteServer(serverIdForDelete);
+		verify(groupRepository).deleteServerGroups(serverIdForDelete, userEmail);
+		verify(serverRepository).deleteServer(serverIdForDelete, userEmail);
 	}
 }

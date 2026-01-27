@@ -24,12 +24,13 @@ public interface UserRepository {
 			SELECT DISTINCT u.id, u.username, u.email, u.image
 			FROM db.users u
 			JOIN db.server_group_users sgu
-			ON u.id = sgu.user_id
+			ON u.email = sgu.user_email
 			JOIN db.server_groups sg
 			ON sg.id = sgu.server_group_id
 			WHERE sg.server_id = #{serverId}
+			AND sgu.user_email = #{userEmail}
 			""")
-	List<User> findAllServer(@Param("serverId") Long serverId);
+	List<User> findAllServer(@Param("serverId") Long serverId, @Param("userEmail") String userEmail);
 
 	@Select("""
 			SELECT id, username, email, image

@@ -42,7 +42,7 @@ public class ServerGroupUsersRepositoryTest {
 	@Autowired
 	DataSource dataSource;
 
-	String userId;
+	String userEmail;
 	Long serverId;
 	String groupForServerId;
 	Long serverGroupId;
@@ -62,7 +62,7 @@ public class ServerGroupUsersRepositoryTest {
 
 	@BeforeAll
 	void setUp() throws Exception {
-		userId = UUID.randomUUID().toString();
+		userEmail = UUID.randomUUID().toString();
 		serverId = 5L;
 		groupForServerId = UUID.randomUUID().toString();
 		serverGroupId = 10L;
@@ -81,18 +81,18 @@ public class ServerGroupUsersRepositoryTest {
 
 			try (var userStmt = conn
 					.prepareStatement("INSERT INTO db.users (id, username, email, image) VALUES (?, ?, ?, ?)")) {
-				userStmt.setString(1, userId);
+				userStmt.setString(1, userEmail);
 				userStmt.setString(2, "john");
-				userStmt.setString(3, "jojohny@example.com");
+				userStmt.setString(3, userEmail);
 				userStmt.setString(4, "avatar.png");
 				userStmt.executeUpdate();
 			}
 
 			try (var serverStmt = conn
-					.prepareStatement("INSERT INTO db.servers (id, name, user_id) VALUES (?, ?, ?)")) {
+					.prepareStatement("INSERT INTO db.servers (id, name, user_email) VALUES (?, ?, ?)")) {
 				serverStmt.setLong(1, serverId);
 				serverStmt.setString(2, serverName);
-				serverStmt.setString(3, userId);
+				serverStmt.setString(3, userEmail);
 				serverStmt.executeUpdate();
 			}
 
@@ -116,13 +116,14 @@ public class ServerGroupUsersRepositoryTest {
 	@Test
 	void insertServerGroupUser_WhenUserExists_ReturnsInsertedServerGroupUser() {
 
-		ServerGroupUser serverGroupUser = ServerGroupUser.builder().serverGroupId(serverGroupId).userId(userId).build();
-		serverGroupUserRepository.insert(serverGroupUser.getServerGroupId(), serverGroupUser.getUserId());
+		ServerGroupUser serverGroupUser = ServerGroupUser.builder().serverGroupId(serverGroupId).userEmail(userEmail)
+				.build();
+		serverGroupUserRepository.insert(serverGroupUser.getServerGroupId(), serverGroupUser.getUserEmail());
 
 		ServerGroupUser result = serverGroupUserRepository.findByServerGroupId(serverGroupId);
 
 		ServerGroupUser expected = ServerGroupUser.builder().id(result.getId()).serverGroupId(serverGroupId)
-				.userId(userId).build();
+				.userEmail(userEmail).build();
 
 		assertThat(result).isEqualTo(expected);
 	}

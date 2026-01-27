@@ -43,16 +43,17 @@ public interface GroupRepository {
 			g.image AS groupImage,
 			sg.server_id AS severId,
 			u.id AS userId,
+			u.email AS userEmail,
 			u.username AS username,
 			u.image AS userImage
 			FROM db.groups g
 			JOIN db.server_groups sg ON sg.group_id = g.id
 			         JOIN db.server_group_users sgu_me ON sgu_me.server_group_id = sg.id
-			    		JOIN db.server_group_users sgu_all ON sgu_all.server_group_id= sg.id
-			        	JOIN db.users u ON u.id = sgu_all.user_id
-					WHERE sgu_me.user_Id = #{userId}
+			    		JOIN db.server_group_users sgu_all ON sgu_all.server_group_id = sg.id
+			        	JOIN db.users u ON u.email = sgu_all.user_email
+					WHERE sgu_me.user_email = #{userEmail}
 			""")
-	List<ServerGroupUserRow> findServerGroupsWithUsers(@Param("userId") String userId);
+	List<ServerGroupUserRow> findServerGroupsWithUsers(@Param("userEmail") String userEmail);
 
 	@Insert("""
 			INSERT INTO db.groups(id, name, image)
@@ -62,10 +63,13 @@ public interface GroupRepository {
 
 	@Delete("""
 			   		DELETE FROM db.groups g
-			   		USING db.server_groups sg
+			   		USING db.server_groups sg,
+					       			  db.servers s
 			   		WHERE sg.group_id = g.id
-			     		AND sg.server_id = #{serverId}
+			     	AND sg.server_id = #{serverId}
+					    		AND s.id = sg.server_id
+								AND s.user_email = #{userEmail}
 			""")
-	void deleteServerGroups(@Param("serverId") Long serverId);
+	void deleteServerGroups(@Param("serverId") Long serverId, @Param("userEmail") String userEmail);
 
 }

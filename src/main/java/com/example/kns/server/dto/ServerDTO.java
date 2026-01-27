@@ -17,6 +17,6 @@ import lombok.EqualsAndHashCode;
 public class ServerDTO {
 	private Long id;
 	private String name;
-	private String userId;
+	private String userEmail;
 	private String backgroundColorHex;
 }

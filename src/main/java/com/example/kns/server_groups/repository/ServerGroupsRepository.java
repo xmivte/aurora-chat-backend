@@ -24,4 +24,14 @@ public interface ServerGroupsRepository {
 			    WHERE server_id = #{serverId}
 			""")
 	ServerGroup findByServerId(@Param("serverId") Long serverId);
+
+	@Delete("""
+			   		DELETE FROM db.server_groups sg
+			   		USING db.servers s
+			   		WHERE s.id = sg.server_id
+					    		AND sg.server_id = #{serverId}
+								AND s.user_email = #{userEmail}
+			""")
+	void deleteServerGroups(@Param("serverId") Long serverId, @Param("userEmail") String userEmail);
+
 }

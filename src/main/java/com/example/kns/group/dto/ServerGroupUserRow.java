@@ -15,6 +15,7 @@ public class ServerGroupUserRow {
 	private String groupImage;
 	private Long serverId;
 	private String userId;
+	private String userEmail;
 	private String username;
 	private String userImage;
 }
