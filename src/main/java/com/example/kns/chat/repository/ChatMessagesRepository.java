@@ -37,7 +37,7 @@ public interface ChatMessagesRepository {
 	void markAsSent(@Param("id") Long id);
 
 	@Select("""
-			SELECT m.id, m.sender_id AS senderId, m.group_id AS groupId, m.content, m.created_at AS createdAt, m.sent, u.username
+			SELECT m.id, m.sender_id AS senderId, m.group_id AS groupId, m.content, (m.created_at AT TIME ZONE '-02') AS createdAt, m.sent, u.username
 			FROM db.chat_messages m
 			JOIN db.users u
 			ON u.id = m.sender_id
