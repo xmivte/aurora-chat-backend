@@ -1,11 +1,13 @@
 package com.example.kns.notifications.controller;
 
+import com.example.kns.dto.UserContext;
 import com.example.kns.notifications.NotificationService;
 
 import com.example.kns.notifications.repository.UserGroupsRepository;
 
 import com.example.kns.notifications.repository.model.UnreadCountRow;
 
+import com.example.kns.user.model.User;
 import org.junit.jupiter.api.Test;
 
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,72 +37,51 @@ import static org.mockito.Mockito.*;
 class NotificationsControllerUnitTest {
 
 	@Mock
-
 	private UserGroupsRepository userGroupsRepository;
 
 	@Mock
-
 	private NotificationService notificationService;
 
 	@InjectMocks
-
 	private NotificationsController controller;
 
 	@Test
-
 	void getUnreadCounts_missingJwt_throws() {
-
 		assertThatThrownBy(() -> controller.getUnreadCounts(null)).isInstanceOf(IllegalArgumentException.class)
-
 				.hasMessageContaining("Missing authenticated user id");
-
 	}
 
 	@Test
-
 	void getUnreadCounts_blankSubject_throws() {
+		var userCtx = new UserContext("     ");
 
-		Jwt jwt = mock(Jwt.class);
-
-		when(jwt.getSubject()).thenReturn("   ");
-
-		assertThatThrownBy(() -> controller.getUnreadCounts(jwt)).isInstanceOf(IllegalArgumentException.class)
-
+		assertThatThrownBy(() -> controller.getUnreadCounts(userCtx)).isInstanceOf(IllegalArgumentException.class)
 				.hasMessageContaining("Missing authenticated user id");
-
 	}
 
 	@Test
 
 	void getUnreadCounts_mapsRows_toMapAndDefaultsNullUnreadToZero() {
-
-		Jwt jwt = mock(Jwt.class);
-
-		when(jwt.getSubject()).thenReturn("u1");
+		var userCtx = new UserContext("temp@gmail.com");
 
 		UnreadCountRow r1 = mock(UnreadCountRow.class);
-
 		when(r1.getGroupId()).thenReturn("g1");
-
 		when(r1.getUnreadCount()).thenReturn(2);
 
 		UnreadCountRow r2 = mock(UnreadCountRow.class);
-
 		when(r2.getGroupId()).thenReturn("g2");
-
 		when(r2.getUnreadCount()).thenReturn(null);
 
 		UnreadCountRow nullGroup = mock(UnreadCountRow.class);
-
 		when(nullGroup.getGroupId()).thenReturn(null);
+		when(userGroupsRepository.findUnreadCountsByUserId("temp@gmail.com"))
+				.thenReturn(Arrays.asList(r1, r2, null, nullGroup));
 
-		when(userGroupsRepository.findUnreadCountsByUserId("u1")).thenReturn(Arrays.asList(r1, r2, null, nullGroup));
-
-		Map<String, Integer> out = controller.getUnreadCounts(jwt);
+		Map<String, Integer> out = controller.getUnreadCounts(userCtx);
 
 		assertThat(out).containsEntry("g1", 2).containsEntry("g2", 0).hasSize(2);
 
-		verify(userGroupsRepository).findUnreadCountsByUserId("u1");
+		verify(userGroupsRepository).findUnreadCountsByUserId("temp@gmail.com");
 
 	}
 
@@ -108,14 +89,10 @@ class NotificationsControllerUnitTest {
 
 	void getUnreadCounts_emptyList_returnsEmptyMap() {
 
-		Jwt jwt = mock(Jwt.class);
+		var userCtx = new UserContext("temp@gmail.com");
+		when(userGroupsRepository.findUnreadCountsByUserId("temp@gmail.com")).thenReturn(List.of());
 
-		when(jwt.getSubject()).thenReturn("u1");
-
-		when(userGroupsRepository.findUnreadCountsByUserId("u1")).thenReturn(List.of());
-
-		Map<String, Integer> out = controller.getUnreadCounts(jwt);
-
+		Map<String, Integer> out = controller.getUnreadCounts(userCtx);
 		assertThat(out).isEmpty();
 
 	}
@@ -125,9 +102,7 @@ class NotificationsControllerUnitTest {
 	void markRead_nullJwt_throws() {
 
 		var req = new NotificationsController.MarkReadRequest("g1");
-
 		assertThatThrownBy(() -> controller.markRead(null, req)).isInstanceOf(IllegalArgumentException.class)
-
 				.hasMessageContaining("Missing authenticated user id");
 
 	}
@@ -136,12 +111,9 @@ class NotificationsControllerUnitTest {
 
 	void markRead_nullBody_throws() {
 
-		Jwt jwt = mock(Jwt.class);
+		var userCtx = new UserContext("temp@gmail.com");
 
-		when(jwt.getSubject()).thenReturn("u1");
-
-		assertThatThrownBy(() -> controller.markRead(jwt, null)).isInstanceOf(IllegalArgumentException.class)
-
+		assertThatThrownBy(() -> controller.markRead(userCtx, null)).isInstanceOf(IllegalArgumentException.class)
 				.hasMessageContaining("Group id is blank");
 
 	}
@@ -150,50 +122,34 @@ class NotificationsControllerUnitTest {
 
 	void markRead_blankGroupId_throws() {
 
-		Jwt jwt = mock(Jwt.class);
-
-		when(jwt.getSubject()).thenReturn("u1");
-
+		var userCtx = new UserContext("temp@gmail.com");
 		var req = new NotificationsController.MarkReadRequest("   ");
 
-		assertThatThrownBy(() -> controller.markRead(jwt, req)).isInstanceOf(IllegalArgumentException.class)
-
+		assertThatThrownBy(() -> controller.markRead(userCtx, req)).isInstanceOf(IllegalArgumentException.class)
 				.hasMessageContaining("Group id is blank");
-
 	}
 
 	@Test
 
 	void markRead_nullGroupId_throws() {
 
-		Jwt jwt = mock(Jwt.class);
-
-		when(jwt.getSubject()).thenReturn("u1");
-
+		var userCtx = new UserContext("temp@gmail.com");
 		var req = new NotificationsController.MarkReadRequest(null);
 
-		assertThatThrownBy(() -> controller.markRead(jwt, req)).isInstanceOf(IllegalArgumentException.class)
-
+		assertThatThrownBy(() -> controller.markRead(userCtx, req)).isInstanceOf(IllegalArgumentException.class)
 				.hasMessageContaining("Group id is blank");
-
 	}
 
 	@Test
 
 	void markRead_valid_callsServiceAndReturnsResponse() {
 
-		Jwt jwt = mock(Jwt.class);
-
-		when(jwt.getSubject()).thenReturn("u1");
-
+		var userCtx = new UserContext("temp@gmail.com");
 		var req = new NotificationsController.MarkReadRequest("g1");
 
-		Map<String, Object> out = controller.markRead(jwt, req);
+		Map<String, Object> out = controller.markRead(userCtx, req);
 
-		verify(notificationService).markRead("u1", "g1");
-
+		verify(notificationService).markRead("temp@gmail.com", "g1");
 		assertThat(out).containsEntry("groupId", "g1").containsEntry("unreadCount", 0);
-
 	}
-
 }

@@ -6,6 +6,9 @@ spring:
 firebase:
   credentials: classpath:firebase/firebase.json
 
+cloudinary:
+  credentials: classpath:cloudinary/cloudinary.json
+
 app:
   frontend:
     origin: "http://localhost:5173"

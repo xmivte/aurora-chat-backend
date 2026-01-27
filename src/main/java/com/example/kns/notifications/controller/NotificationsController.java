@@ -1,5 +1,6 @@
 package com.example.kns.notifications.controller;
 
+import com.example.kns.dto.UserContext;
 import com.example.kns.notifications.repository.UserGroupsRepository;
 import com.example.kns.notifications.repository.model.UnreadCountRow;
 import com.example.kns.notifications.NotificationService;
@@ -26,13 +27,12 @@ public class NotificationsController {
 	private final NotificationService notificationService;
 
 	@GetMapping("/unread")
-	public Map<String, Integer> getUnreadCounts(@AuthenticationPrincipal Jwt jwt) {
-		String userId = (jwt == null) ? null : jwt.getSubject();
-		if (StringUtils.isBlank(userId)) {
+	public Map<String, Integer> getUnreadCounts(@AuthenticationPrincipal UserContext userContext) {
+		if (userContext == null || userContext.getEmail() == null || StringUtils.isBlank(userContext.getEmail())) {
 			throw new IllegalArgumentException("Missing authenticated user id");
 		}
 
-		List<UnreadCountRow> rows = userGroupsRepository.findUnreadCountsByUserId(userId);
+		List<UnreadCountRow> rows = userGroupsRepository.findUnreadCountsByUserId(userContext.getEmail());
 		Map<String, Integer> out = new HashMap<>();
 
 		for (UnreadCountRow r : rows) {
@@ -58,15 +58,16 @@ public class NotificationsController {
 	}
 
 	@PostMapping("/read")
-	public Map<String, Object> markRead(@AuthenticationPrincipal Jwt jwt, @RequestBody @Valid MarkReadRequest req) {
-		String userId = (jwt == null) ? null : jwt.getSubject();
-		if (StringUtils.isBlank(userId)) {
+	public Map<String, Object> markRead(@AuthenticationPrincipal UserContext userCtx,
+			@RequestBody @Valid MarkReadRequest req) {
+		if (userCtx == null || userCtx.getEmail() == null || StringUtils.isBlank(userCtx.getEmail())) {
 			throw new IllegalArgumentException("Missing authenticated user id");
 		}
 		if (req == null || StringUtils.isBlank(req.groupId())) {
 			throw new IllegalArgumentException("Group id is blank");
 		}
 
+		final var userId = userCtx.getEmail();
 		notificationService.markRead(userId, req.groupId());
 		return Map.of("groupId", req.groupId(), "unreadCount", 0);
 	}

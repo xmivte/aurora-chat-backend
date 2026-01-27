@@ -22,6 +22,10 @@ spec:
               mountPath: /etc/firebase.json
               subPath: firebase.json
               readOnly: true
+            - name: cloudinary-config
+              mountPath: /etc/cloudinary.json
+              subPath: cloudinary.json
+              readOnly: true
           imagePullPolicy: "Always"
           ports:
             - name: http
@@ -62,4 +66,10 @@ spec:
             items:
               - key: {{ .Values.firebase.secretKey }}
                 path: firebase.json
+        - name: cloudinary-config
+          secret:
+            secretName: {{ .Values.cloudinary.secretName }}
+            items:
+              - key: {{ .Values.cloudinary.secretKey }}
+                path: cloudinary.json
 

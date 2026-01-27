@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+    <!-- Suppress EI_EXPOSE_REP and EI_EXPOSE_REP2 warnings for Lombok-generated code -->
+    <!-- These are false positives caused by @Data, @Builder annotations -->
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
+        <Or>
+            <Class name="~.*\.dto\..*"/>
+            <Class name="~.*\.model\..*"/>
+            <Class name="~.*\.config\..*"/>
+        </Or>
+    </Match>
+
+    <!-- Suppress warnings for dependency injection fields in controllers/services -->
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+        <Or>
+            <Class name="~.*Controller.*"/>
+            <Class name="~.*Service"/>
+            <Class name="~.*Scheduler"/>
+        </Or>
+        <Or>
+            <Field name="~.*Repository"/>
+            <Field name="~.*Service"/>
+            <Field name="service"/>
+            <Field name="config"/>
+            <Field name="cloudinary"/>
+        </Or>
+    </Match>
+
+    <!-- Suppress UPM_UNCALLED_PRIVATE_METHOD for validation methods used by Bean Validation -->
+    <Match>
+        <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD"/>
+        <Class name="com.example.kns.chat.dto.ChatMessageDTO"/>
+        <Or>
+            <Method name="isValidMessage"/>
+            <Method name="isValidTotalFileSize"/>
+        </Or>
+    </Match>
+
+    <!-- Suppress all warnings for test code -->
+    <Match>
+        <Class name="~.*Test"/>
+    </Match>
+</FindBugsFilter>

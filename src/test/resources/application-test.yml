@@ -14,3 +14,7 @@ mybatis:
 
 firebase:
   enabled: false
+  credentials: classpath:test-firebase.json
+
+cloudinary:
+  credentials: classpath:test-cloudinary.json

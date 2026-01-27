@@ -35,6 +35,9 @@ clone:
 build:
   stage: build
   image: harbor.devbridge.net/sourcery-academy/gitlab-packages:latest
+  variables:
+    GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+    GRADLE_USER_HOME: "/tmp/gradle"
   script:
     - /kaniko/executor
       --context "git-clone"

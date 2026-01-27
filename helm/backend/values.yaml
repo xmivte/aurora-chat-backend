@@ -5,6 +5,10 @@ firebase:
   secretName: firebase-credentials
   secretKey: firebase.json
 
+cloudinary:
+  secretName: cloudinary-credentials
+  secretKey: cloudinary.json
+
 backend:
   container:
     image: 

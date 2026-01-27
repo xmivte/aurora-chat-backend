@@ -40,4 +40,9 @@ public class GroupController {
 		return service.createGroup(request.getMyUserId(), request.getOtherUserId());
 	}
 
+	@GetMapping("/{groupId}/participants")
+	public List<String> getParticipants(@PathVariable String groupId) {
+		return service.getParticipantIds(groupId);
+	}
+
 }
