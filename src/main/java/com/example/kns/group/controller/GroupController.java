@@ -37,6 +37,7 @@ public class GroupController {
 
 	@PostMapping
 	public GroupDTO createGroup(@RequestBody CreateGroupRequest request) {
+
 		return service.createGroup(request.getMyUserId(), request.getOtherUserId());
 	}
 
