@@ -11,11 +11,41 @@ DB Credentials: username: `db_user`, password: `password` (in application.yml)
 **Docker**  
 Start required services for the project with: `docker compose -p edvinas-be up -d` 
 
-**Firebase**  
+**Firebase**
 Link to the Firebase project: https://console.firebase.google.com/project/sourcery-academy/settings/serviceaccounts/adminsdk
 1. To get JSON file go under `Service Accounts` -> `Generate new private key`.
 2. Rename the downloaded file to `firebase.json`
 3. That downloaded JSON file should be placed in `src/main/resources/firebase/firebase.json` folder.
+
+**Firebase (for tests)**
+1. Create `src/test/resources/test-firebase.json` with the following structure:
+```json
+{
+  "type": "service_account",
+  "project_id": "your-project-id",
+  "private_key_id": "your-key-id",
+  "private_key": "-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n",
+  "client_email": "your-service-account@your-project.iam.gserviceaccount.com",
+  "client_id": "123456789",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/your-service-account"
+}
+```
+2. Use actual Firebase credentials from the Firebase Console or create dummy values for local testing.
+
+**Cloudinary (for file uploads)**
+1. Create a Cloudinary account at https://cloudinary.com
+2. Create `src/main/resources/cloudinary.json` with:
+```json
+{
+  "cloud_name": "your-cloud-name",
+  "api_key": "your-api-key",
+  "api_secret": "your-api-secret"
+}
+```
+3. For tests, create `src/test/resources/test-cloudinary.json` with the same structure.
 
 **Run locally**  
 Run Local with: `./gradlew bootRun --args="--spring.profiles.active=local"`  
