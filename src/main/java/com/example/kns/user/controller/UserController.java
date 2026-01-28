@@ -1,9 +1,11 @@
 package com.example.kns.user.controller;
 
+import com.example.kns.dto.UserContext;
 import com.example.kns.user.dto.UserDTO;
 import com.example.kns.user.model.User;
 import com.example.kns.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +23,13 @@ public class UserController {
 	@GetMapping("/{groupId}")
 	public List<UserDTO> getUsers(@PathVariable String groupId) {
 		return service.getAll(groupId).stream().map(
+				user -> UserDTO.builder().id(user.getId()).username(user.getUsername()).image(user.getImage()).build())
+				.toList();
+	}
+
+	@GetMapping("/server/{serverId}")
+	public List<UserDTO> getServerUsers(@PathVariable Long serverId, @AuthenticationPrincipal UserContext userContext) {
+		return service.getAllServer(serverId, userContext.getEmail()).stream().map(
 				user -> UserDTO.builder().id(user.getId()).username(user.getUsername()).image(user.getImage()).build())
 				.toList();
 	}

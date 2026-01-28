@@ -27,4 +27,7 @@ public class UserService {
 		return mapper.findAllUsers();
 	}
 
+	public List<User> getAllServer(Long serverId, String userEmail) {
+		return mapper.findAllServer(serverId, userEmail);
+	}
 }

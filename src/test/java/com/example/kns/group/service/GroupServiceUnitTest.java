@@ -1,5 +1,6 @@
 package com.example.kns.group.service;
 
+import com.example.kns.group.dto.ServerGroupUserRow;
 import com.example.kns.group.model.Group;
 import com.example.kns.user.model.User;
 import com.example.kns.group.repository.GroupRepository;
@@ -69,6 +70,33 @@ public class GroupServiceUnitTest {
 		assertThat(group2.getUsers().get(0).getUsername()).isEqualTo("Charlie");
 
 		verify(mapper).findGroupsWithUsers(userId);
+	}
+
+	@Test
+	void getAllWithUsers_ServerGroupRowsIntoNestedDTOs() {
+		String userId = "1";
+		Long serverId = 1L;
+
+		List<ServerGroupUserRow> rows = List.of(
+				new ServerGroupUserRow("g1", "Group 1", "img1", serverId, "u1", "Alice", "Alice", "a.png"),
+				new ServerGroupUserRow("g1", "Group 1", "img1", serverId, "u2", "Bob", "Bob", "p.png"),
+				new ServerGroupUserRow("g2", "Group 2", "img2", serverId, "u3", "Charlie", "Charlie", "c.png"));
+
+		when(mapper.findServerGroupsWithUsers(userId)).thenReturn(rows);
+
+		var result = groupService.getAllServerGroupsWithUsers(userId);
+		assertThat(result).hasSize(2);
+
+		var group1 = result.stream().filter(g -> g.getId().equals("g1")).findFirst().orElseThrow();
+		assertThat(group1.getUsers()).hasSize(2);
+		assertThat(group1.getUsers().get(0).getUsername()).isEqualTo("Alice");
+		assertThat(group1.getUsers().get(1).getUsername()).isEqualTo("Bob");
+
+		var group2 = result.stream().filter(g -> g.getId().equals("g2")).findFirst().orElseThrow();
+		assertThat(group2.getUsers()).hasSize(1);
+		assertThat(group2.getUsers().get(0).getUsername()).isEqualTo("Charlie");
+
+		verify(mapper).findServerGroupsWithUsers(userId);
 	}
 
 }

@@ -1,8 +1,11 @@
 package com.example.kns.group.repository;
 
 import com.example.kns.config.TestEmbeddedPostgresConfig;
+import com.example.kns.group.dto.ServerGroupUserRow;
 import com.example.kns.group.model.Group;
 import com.example.kns.group.dto.GroupUserRow;
+import com.example.kns.server_group_users.repository.ServerGroupUserRepository;
+import com.example.kns.server_groups.repository.ServerGroupsRepository;
 import com.example.kns.user.model.User;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -39,18 +42,42 @@ public class GroupRepositoryTest {
 	String userId;
 	String groupId;
 
+	String userEmail;
+	Long serverId;
+	String groupForServerId;
+	Long serverGroupId;
+	@Autowired
+	private ServerGroupsRepository serverGroupsRepository;
+
+	@Autowired
+	private ServerGroupUserRepository serverGroupUserRepository;
+
 	@BeforeAll
 	void setUp() throws Exception {
 		userId = UUID.randomUUID().toString();
 		groupId = UUID.randomUUID().toString();
 
+		userEmail = UUID.randomUUID().toString();
+		serverId = 1L;
+		groupForServerId = UUID.randomUUID().toString();
+		serverGroupId = 1L;
+
 		try (var conn = dataSource.getConnection()) {
+			try (var cleanup = conn.prepareStatement("""
+					    TRUNCATE TABLE
+					        db.server_group_users,
+					        db.server_groups,
+					        db.servers
+					    RESTART IDENTITY CASCADE
+					""")) {
+				cleanup.execute();
+			}
 
 			try (var userStmt = conn
 					.prepareStatement("INSERT INTO db.users (id, username, email, image) VALUES (?, ?, ?, ?)")) {
 				userStmt.setString(1, userId);
 				userStmt.setString(2, "john");
-				userStmt.setString(3, "johny@example.com");
+				userStmt.setString(3, userEmail);
 				userStmt.setString(4, "avatar.png");
 				userStmt.executeUpdate();
 			}
@@ -68,6 +95,38 @@ public class GroupRepositoryTest {
 				userGroupStmt.setString(2, groupId);
 				userGroupStmt.executeUpdate();
 			}
+			// ---------------------
+			try (var serverStmt = conn
+					.prepareStatement("INSERT INTO db.servers (id, name, user_email) VALUES (?, ?, ?)")) {
+				serverStmt.setLong(1, serverId);
+				serverStmt.setString(2, "server");
+				serverStmt.setString(3, userEmail);
+				serverStmt.executeUpdate();
+			}
+
+			try (var serverStmt = conn.prepareStatement("INSERT INTO db.groups (id, name, image) VALUES (?, ?, ?)")) {
+				serverStmt.setString(1, groupForServerId);
+				serverStmt.setString(2, "main");
+				serverStmt.setString(3, "");
+				serverStmt.executeUpdate();
+			}
+
+			try (var serverStmt = conn
+					.prepareStatement("INSERT INTO db.server_groups (id, server_id, group_id) VALUES (?, ?, ?)")) {
+				serverStmt.setLong(1, serverGroupId);
+				serverStmt.setLong(2, serverId);
+				serverStmt.setString(3, groupForServerId);
+				serverStmt.executeUpdate();
+			}
+
+			try (var serverStmt = conn.prepareStatement(
+					"INSERT INTO db.server_group_users (id, server_group_id, user_email) VALUES (?, ?, ?)")) {
+				serverStmt.setLong(1, 1L);
+				serverStmt.setLong(2, serverGroupId);
+				serverStmt.setString(3, userEmail);
+				serverStmt.executeUpdate();
+			}
+
 		}
 	}
 
@@ -115,4 +174,34 @@ public class GroupRepositoryTest {
 		assertThat(rows).isEmpty();
 	}
 
+	@Test
+	void findServerGroupsWithUsers_WhenUserHasServerAndServerHasGroup_ReturnsFlattenedRows() {
+		List<ServerGroupUserRow> rows = groupRepository.findServerGroupsWithUsers(userEmail);
+
+		assertThat(rows).hasSize(1);
+		ServerGroupUserRow row = rows.get(0);
+		ServerGroupUserRow rowCopy = ServerGroupUserRow.builder().groupId(groupForServerId).groupName("main")
+				.groupImage("").serverId(serverId).userId(userId).userEmail(userEmail).username("john")
+				.userImage("avatar.png").build();
+
+		assertThat(row).isEqualTo(rowCopy);
+	}
+
+	@Test
+	void findServerGroupsWithUsers_WhenNoServer_ReturnsEmptyList() {
+		String nonExistingUser = UUID.randomUUID().toString();
+
+		List<ServerGroupUserRow> rows = groupRepository.findServerGroupsWithUsers(nonExistingUser);
+
+		assertThat(rows).isEmpty();
+	}
+
+	@Test
+	void deleteSeverGroup_WhenServerHasGroup_ReturnsEmptyList() {
+		serverGroupUserRepository.deleteServerGroupUsers(serverGroupId, userEmail);
+		serverGroupsRepository.deleteServerGroups(serverGroupId, userEmail);
+		groupRepository.deleteServerGroups(serverGroupId, userEmail);
+		List<ServerGroupUserRow> rows = groupRepository.findServerGroupsWithUsers(userEmail);
+		assertThat(rows).isEmpty();
+	}
 }
