@@ -1,43 +1,65 @@
-## README
+# Aurora Chat — Backend
 
-This is template/example repository for BE project for Sourcery Academy's 2025 Spring session.
-It is possible to run linting(Spotless, SpotBugs, PMD) on demand with command ./gradlew check
+A secure, real-time chat backend built with Java 21 and Spring Boot. Provides REST APIs, WebSocket messaging, Firebase authentication, end-to-end encrypted message storage, and secure file sharing via Cloudinary.
 
-<h1> How to Run a Project </h1>
+> Built during the **Sourcery Academy 2025 Fall** internship program.
 
-**Database Credentials**  
-DB Credentials: username: `db_user`, password: `password` (in application.yml)  
+## Features
 
-**Docker**  
-Start required services for the project with: `docker compose -p edvinas-be up -d` 
+- **Firebase Authentication** — JWT token validation via Firebase Admin SDK (RS256 asymmetric signing)
+- **Real-Time Messaging** — WebSocket (STOMP over SockJS) for instant message delivery, typing indicators, and presence
+- **Secure File Sharing** — 8 layers of upload validation, proxied downloads (Cloudinary URLs never exposed to clients)
+- **Servers & Topics** — Server creation with topic-based channels for organized group conversations
+- **Pinned Messages** — Pin/unpin messages within group chats
+- **User Management** — Profile updates, user search, avatar uploads
+- **Automatic File Cleanup** — Cron job deletes expired files from Cloudinary and database after 7 days
+- **Rate Limiting** — 20 file uploads per user per minute
+- **API Documentation** — Swagger UI / OpenAPI 3.0
 
-**Firebase**
-Link to the Firebase project: https://console.firebase.google.com/project/sourcery-academy/settings/serviceaccounts/adminsdk
-1. To get JSON file go under `Service Accounts` -> `Generate new private key`.
-2. Rename the downloaded file to `firebase.json`
-3. That downloaded JSON file should be placed in `src/main/resources/firebase/firebase.json` folder.
+## Tech Stack
 
-**Firebase (for tests)**
-1. Create `src/test/resources/test-firebase.json` with the following structure:
-```json
-{
-  "type": "service_account",
-  "project_id": "your-project-id",
-  "private_key_id": "your-key-id",
-  "private_key": "-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n",
-  "client_email": "your-service-account@your-project.iam.gserviceaccount.com",
-  "client_id": "123456789",
-  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-  "token_uri": "https://oauth2.googleapis.com/token",
-  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/your-service-account"
-}
+| Technology | Version | Purpose |
+|---|---|---|
+| Java | 21 | Language |
+| Spring Boot | 3.3.4 | Application framework |
+| PostgreSQL | 17 | Database |
+| MyBatis | — | SQL mapper |
+| Flyway | — | Database migrations |
+| Firebase Admin SDK | — | JWT authentication |
+| Cloudinary | — | Cloud file storage |
+| Apache Tika | — | File type detection (magic bytes) |
+| Docker | — | Local development services |
+| Swagger / OpenAPI | 3.0 | API documentation |
+
+## Getting Started
+
+### Prerequisites
+
+- Java 21
+- Docker & Docker Compose
+- Gradle
+
+### 1. Start Database
+
+```bash
+docker compose -p edvinas-be up -d
 ```
-2. Use actual Firebase credentials from the Firebase Console or create dummy values for local testing.
 
-**Cloudinary (for file uploads)**
-1. Create a Cloudinary account at https://cloudinary.com
-2. Create `src/main/resources/cloudinary.json` with:
+Database credentials: `db_user` / `password` (configured in `application.yml`)
+
+### 2. Firebase Setup
+
+1. Go to [Firebase Console](https://console.firebase.google.com) → your project → **Service Accounts**
+2. Click **Generate new private key**
+3. Rename the downloaded file to `firebase.json`
+4. Place it in `src/main/resources/firebase/firebase.json`
+
+For tests, create `src/test/resources/test-firebase.json` with the same structure (or use dummy values).
+
+### 3. Cloudinary Setup (for file uploads)
+
+1. Create a [Cloudinary](https://cloudinary.com) account
+2. Create `src/main/resources/cloudinary.json`:
 ```json
 {
   "cloud_name": "your-cloud-name",
@@ -47,99 +69,75 @@ Link to the Firebase project: https://console.firebase.google.com/project/source
 ```
 3. For tests, create `src/test/resources/test-cloudinary.json` with the same structure.
 
-**Run locally**  
-Run Local with: `./gradlew bootRun --args="--spring.profiles.active=local"`  
-Run Prod with `./gradlew bootRun --args="--spring.profiles.active=prod"`
+### 4. Run
 
+```bash
+# Local profile
+./gradlew bootRun --args="--spring.profiles.active=local"
 
-<h1>API docs</h1>
+# Production profile
+./gradlew bootRun --args="--spring.profiles.active=prod"
+```
 
-**Local**:  
-Swagger UI: http://localhost:8080/swagger-ui/index.html  
-OpenAPI JSON: http://localhost:8080/v3/api-docs  
+### 5. Linting
 
-**Deployed**:  
-Swagger UI: https://aurora-chat.api.devbstaging.com/swagger-ui/index.html  
-OpenAPI JSON: https://aurora-chat.api.devbstaging.com/v3/api-docs  
+```bash
+./gradlew check
+```
 
-h1>To test out websockets in FE:</h1>
+Runs Spotless, SpotBugs, and PMD.
 
-There is no user, group creation currently you to test out the capabilities
-you will need to add db entries manually.
+## API Documentation
 
-1. Login into the app.
-2. Go to App.tsx
+| Environment | Swagger UI | OpenAPI JSON |
+|---|---|---|
+| Local | http://localhost:8080/swagger-ui/index.html | http://localhost:8080/v3/api-docs |
 
-   useEffect(() => {
-   const auth = getAuth();
-   const user = auth.currentUser;
-   if (user) {
+## File Sharing Security
 
-3. Add console.log(user.uid);
+The file sharing system implements **8 layers of upload security**:
 
-   setUserId(user.uid);
-   } else {
-   console.warn('No authenticated user');
-   }
-   }, []);
+1. **JWT Authentication** — Firebase token required
+2. **Rate Limiting** — 20 uploads/user/minute
+3. **File Count Limit** — Max 5 files per message
+4. **File Size Limit** — 10 MB max per file
+5. **Filename Length** — Max 255 characters
+6. **Extension Blacklist** — 22 dangerous extensions blocked
+7. **Magic Byte Detection** — Apache Tika verifies actual file type
+8. **UUID Filenames** — Original filenames replaced with UUIDs in storage
 
-4. Copy the value from console log (it is your id)
-5. Creat user with that id
-6. Repeat steps 1, 4, 5 with a different email account 
-7. Create a db entry into group table
-8. Create a db entries into user_groups table
-Then you go the url the group you created should be displayed
-then you click on it a chat with the other account should be open
-if you open two different browsers with different users you can chat 
-between them
+**Download security:** Files are proxied through the backend — Cloudinary URLs are **never exposed** to clients. The backend fetches from Cloudinary and streams raw bytes to authenticated, authorized users.
 
+**Automatic cleanup:** A cron job runs daily at 3 AM, deleting files older than 7 days from both Cloudinary and the database.
 
-<h1>To test out websockets in POSTMAN:</h1>
-Use Notepad++:
+## Project Structure
 
-1. Enable View → Show Symbol → Show All Characters
-2. Write the first STOMP frame:
+```
+src/main/java/com/example/kns/
+├── chat/           # Chat messaging (WebSocket + REST)
+├── file/           # File upload, download, storage, cleanup
+├── group/          # Group/server management
+├── security/       # Firebase auth, security config
+├── server/         # Server & topic management
+└── user/           # User profiles & search
+```
 
-<h3>FIRST STOMP FRAME</h3>
-CONNECT
-accept-version:1.1,1.2
-heart-beat:0,0
+## Team
 
-^@
+**Students:**
+- Egle Mickeviciute
+- Lukas Kasparavicius
+- Matas Brazauskas
+- Povilas Sakalauskas
+- Ruta Gaizutyte
+- Viktoras Timofejevas
 
+**Mentor:** Edvinas Jaskovikas
 
-3. Leave the empty line between the text and ^@ and replace ^@ with a NULL character using Edit → Character Panel → NULL (0)
-- ![img.png](docs/images/img.png)
-4. Select all → Plugins → MIME Tools → Base64 Encode with Padding and copy the encoded result.
-5. Open POSTMAN and inside select the "Websocket" option, connect to ws://localhost:8080/ws-stomp
-6. Change the message type from "Text", to "Binary" and "Base64"
-7. Paste the text and send, you should see a blue received message such as CONNECTED
-8. Repeat steps 2-7 with the SECOND and THIRD STOMP frames below:
+## Related
 
+- [Aurora Chat Frontend](https://github.com/xmivte/aurora-chat-frontend) — React + TypeScript frontend
 
-<h3>SECOND STOMP FRAME</h3>
-SUBSCRIBE
-id:sub-1
-destination:/topic/chat.GLOBAL
+---
 
-^@
-
-![img_1.png](docs/images/img_1.png)
-
-
-<h3>THIRD STOMP FRAME</h3>
-SEND
-destination:/app/send.message
-content-type:application/json
-
-{"senderId":1,"groupId":"GLOBAL","content":"Hello!"}
-
-^@
-
-![img_2.png](docs/images/img_2.png)
-
-
-##### Testing websockets with POSTMAN links:
-https://dev.to/danielsc/testing-stomp-websocket-with-postman-218a
-https://stackoverflow.com/questions/71696431/how-to-test-stomp-application-using-postman
-https://stomp.github.io/stomp-specification-1.2.html#STOMP_Frames
+*Built at Sourcery Academy 2025*
